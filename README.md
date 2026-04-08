@@ -1,5 +1,22 @@
 # physics.exe Hackathon Codebase
 
+## Quick Start
+
+```bash
+# 1. Install UV (Python package manager)
+curl -LsSf https://astral.sh/uv/install.sh | sh   # macOS / Linux
+# On Windows: powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# 2. Clone this repo
+git clone https://github.com/canrager/physics_exe.git
+cd physics_exe
+
+# 3. Run the starter script (this installs everything automatically)
+uv run main.py
+```
+
+You should see: `Plot saved to exponential.png -- your repo setup is working!`
+
 ## What is UV?
 
 UV is a tool that manages Python and its packages for you. Think of it like an app store for Python libraries — you tell it what you need and it downloads and installs everything automatically.
