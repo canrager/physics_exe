@@ -6,7 +6,7 @@ import zipfile
 from collections import defaultdict
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -415,6 +415,15 @@ def _load_temperature_weather(participant_dir: Path, hours: list[datetime]) -> d
                 idx = hour_to_idx[hour]
                 raw_values[idx] = total / counts[hour]
                 availability[idx] = 1.0
+            observed = raw_values[np.isfinite(raw_values)]
+            if observed.size:
+                clip_low = max(-30.0, float(np.quantile(observed, 0.005)))
+                clip_high = min(45.0, float(np.quantile(observed, 0.995)))
+                raw_values = np.where(
+                    np.isfinite(raw_values),
+                    np.clip(raw_values, clip_low, clip_high),
+                    raw_values,
+                )
             default = float(np.nanmean(raw_values)) if np.isfinite(np.nanmean(raw_values)) else 0.0
             weather_features[feature_name] = _forward_fill(raw_values, default=default).astype(np.float32)
             weather_features[f"{feature_name}_available"] = availability
@@ -648,6 +657,7 @@ def build_training_arrays(
     sequence = np.empty((len(target_times), history_hours, len(feature_names)), dtype=np.float32)
     labels = np.empty(len(target_times), dtype=np.float32)
     recent_volatility = np.empty(len(target_times), dtype=np.float32)
+    naive_baseline = np.empty(len(target_times), dtype=np.float32)
     for idx, target_time in enumerate(target_times):
         start_idx, end_idx = window_bounds_for_target(
             target_time,
@@ -660,11 +670,14 @@ def build_training_arrays(
         labels[idx] = feature_table.target[label_idx]
         recent_window = feature_table.target[max(0, end_idx - 23) : end_idx + 1]
         recent_volatility[idx] = float(np.std(recent_window))
+        lag_24_idx = feature_table.hour_to_idx[target_time - timedelta(hours=24)]
+        naive_baseline[idx] = feature_table.target[lag_24_idx]
     return {
         "sequence": sequence,
         "target_calendar": target_calendar,
         "labels": labels,
         "recent_volatility": recent_volatility,
+        "naive_baseline": naive_baseline,
         "target_times": target_times,
     }
 
@@ -682,6 +695,7 @@ def build_prediction_arrays(
     target_calendar = target_calendar_matrix(target_times)
     sequence = np.empty((len(target_times), history_hours, len(feature_names)), dtype=np.float32)
     recent_volatility = np.empty(len(target_times), dtype=np.float32)
+    naive_baseline = np.empty(len(target_times), dtype=np.float32)
     for idx, target_time in enumerate(target_times):
         start_idx, end_idx = window_bounds_for_target(
             target_time,
@@ -692,10 +706,13 @@ def build_prediction_arrays(
         sequence[idx] = feature_matrix[start_idx : end_idx + 1]
         recent_window = feature_table.target[max(0, end_idx - 23) : end_idx + 1]
         recent_volatility[idx] = float(np.std(recent_window))
+        lag_24_idx = feature_table.hour_to_idx[target_time - timedelta(hours=24)]
+        naive_baseline[idx] = feature_table.target[lag_24_idx]
     return {
         "sequence": sequence,
         "target_calendar": target_calendar,
         "recent_volatility": recent_volatility,
+        "naive_baseline": naive_baseline,
         "target_times": target_times,
     }
 

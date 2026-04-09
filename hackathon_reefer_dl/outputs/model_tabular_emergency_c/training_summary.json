@@ -1,0 +1,152 @@
+{
+  "ablation_results": [
+    {
+      "groups": [
+        "load_calendar"
+      ],
+      "kept": true,
+      "mean_composite": 120.82708748974345,
+      "stage": "load_calendar"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "reefer_state"
+      ],
+      "improvement_vs_previous": -3.558243894143615,
+      "kept": false,
+      "mean_composite": 124.38533138388706,
+      "stage": "load_calendar+reefer_state"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "turnover_age"
+      ],
+      "improvement_vs_previous": -1.216160986107056,
+      "kept": false,
+      "mean_composite": 122.0432484758505,
+      "stage": "load_calendar+turnover_age"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "external_temperature"
+      ],
+      "improvement_vs_previous": -4.38157711687758,
+      "kept": false,
+      "mean_composite": 125.20866460662103,
+      "stage": "load_calendar+external_temperature"
+    }
+  ],
+  "ablation_seeds": [
+    23
+  ],
+  "acceptance_gate": {
+    "beats_lag24": true,
+    "beats_organizer_baseline": true,
+    "passed": false,
+    "under_target_45": false
+  },
+  "config_path": "hackathon_reefer_dl/configs/runtime_tabular_emergency.json",
+  "cv_baselines": {
+    "lag24": 145.44005571311436,
+    "organizer_baseline": 122.87621679956442
+  },
+  "cv_fold_metrics": [
+    {
+      "composite": 161.21666722216705,
+      "fold": 0,
+      "mae_all": 177.2078943614708,
+      "mae_peak": 211.76565086459718,
+      "pinball_p90": 45.415123910262444
+    },
+    {
+      "composite": 80.43750775731985,
+      "fold": 1,
+      "mae_all": 92.87115688511864,
+      "mae_peak": 99.26609099077956,
+      "pinball_p90": 21.110510087633337
+    }
+  ],
+  "cv_mean_composite": 120.82708748974345,
+  "data_path": "hackathon_reefer_dl/artifacts/hourly_features.parquet",
+  "device": "cuda",
+  "final_checkpoints": [
+    "model_seed_23.pt"
+  ],
+  "final_epochs": 18,
+  "forecast_horizon_hours": 24,
+  "history_hours": 336,
+  "model_kwargs": {
+    "dilations": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "dropout": 0.1,
+    "hidden_dim": 128,
+    "input_dim": 16,
+    "kernel_size": 3,
+    "model_type": "tabular_mlp",
+    "target_calendar_dim": 7
+  },
+  "point_calibration": {
+    "alpha": 0.75,
+    "global_bias": -29.344772338867188,
+    "hour_bias": {
+      "0": -26.034599645813902,
+      "1": -29.787359064275567,
+      "10": -37.10912253639915,
+      "11": -30.671696449393657,
+      "12": -28.882687924513178,
+      "13": -33.0681935780084,
+      "14": -23.144062326915233,
+      "15": -41.57351866764809,
+      "16": -38.94595769625991,
+      "17": -28.503671219099814,
+      "18": -26.083002802151356,
+      "19": -28.919715084246736,
+      "2": -36.46960587935014,
+      "20": -23.5255238547254,
+      "21": -27.12919639473531,
+      "22": -23.09313646003382,
+      "23": -27.559688511179456,
+      "3": -39.574179909446016,
+      "4": -38.95884773947976,
+      "5": -37.841821150346235,
+      "6": -32.90893693403764,
+      "7": -30.77324884588068,
+      "8": -26.446982643821023,
+      "9": -27.43993655118075
+    },
+    "shrinkage": 48.0
+  },
+  "seeds": [
+    23
+  ],
+  "selected_feature_names": [
+    "load_kw",
+    "load_lag_24",
+    "load_lag_168",
+    "load_roll_mean_24",
+    "load_roll_std_24",
+    "load_roll_mean_168",
+    "load_roll_std_168",
+    "load_delta_1",
+    "load_delta_24",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "doy_sin",
+    "doy_cos",
+    "is_weekend"
+  ],
+  "selected_groups": [
+    "load_calendar"
+  ]
+}

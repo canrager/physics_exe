@@ -1,0 +1,154 @@
+{
+  "ablation_results": [
+    {
+      "groups": [
+        "load_calendar"
+      ],
+      "kept": true,
+      "mean_composite": 112.50106729482306,
+      "stage": "load_calendar"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "reefer_state"
+      ],
+      "improvement_vs_previous": 19.039852207473842,
+      "kept": true,
+      "mean_composite": 93.46121508734922,
+      "stage": "load_calendar+reefer_state"
+    }
+  ],
+  "ablation_seeds": [
+    23
+  ],
+  "acceptance_gate": {
+    "beats_lag24": true,
+    "beats_organizer_baseline": true,
+    "passed": false,
+    "under_target_45": false
+  },
+  "config_path": "hackathon_reefer_dl/configs/runtime_emergency.json",
+  "cv_baselines": {
+    "lag24": 145.44005571311436,
+    "organizer_baseline": 122.87621679956442
+  },
+  "cv_fold_metrics": [
+    {
+      "composite": 105.35567129123274,
+      "fold": 0,
+      "mae_all": 126.49983233859082,
+      "mae_peak": 120.50351314497846,
+      "pinball_p90": 29.773505892219028
+    },
+    {
+      "composite": 81.56675888346571,
+      "fold": 1,
+      "mae_all": 97.62180945660958,
+      "mae_peak": 93.8895633647367,
+      "pinball_p90": 22.944925728699545
+    }
+  ],
+  "cv_mean_composite": 93.46121508734922,
+  "data_path": "hackathon_reefer_dl/artifacts/hourly_features.parquet",
+  "device": "cuda",
+  "final_checkpoints": [
+    "model_seed_23.pt"
+  ],
+  "final_epochs": 6,
+  "forecast_horizon_hours": 24,
+  "history_hours": 336,
+  "model_kwargs": {
+    "dilations": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "dropout": 0.1,
+    "hidden_dim": 128,
+    "input_dim": 38,
+    "kernel_size": 3,
+    "target_calendar_dim": 7
+  },
+  "point_calibration": {
+    "alpha": 1.0,
+    "global_bias": -29.466552734375,
+    "hour_bias": {
+      "0": -26.772671011991278,
+      "1": -25.6339852469308,
+      "10": -22.959455217633927,
+      "11": -36.98621741006541,
+      "12": -33.92706724654796,
+      "13": -39.027934229651166,
+      "14": -29.187800917514537,
+      "15": -40.97587975790334,
+      "16": -41.23168093659157,
+      "17": -30.094229764716573,
+      "18": -35.828760901162795,
+      "19": -28.669429335483287,
+      "2": -35.85440935407365,
+      "20": -29.673998455668606,
+      "21": -31.152386332667152,
+      "22": -22.825323060501454,
+      "23": -28.76228368005087,
+      "3": -37.43101283482143,
+      "4": -29.559020996093746,
+      "5": -24.95993477957589,
+      "6": -30.103929792131694,
+      "7": -19.02776227678571,
+      "8": -22.126796177455354,
+      "9": -12.90097481863839
+    },
+    "shrinkage": 24.0
+  },
+  "seeds": [
+    23
+  ],
+  "selected_feature_names": [
+    "load_kw",
+    "load_lag_24",
+    "load_lag_168",
+    "load_roll_mean_24",
+    "load_roll_std_24",
+    "load_roll_mean_168",
+    "load_roll_std_168",
+    "load_delta_1",
+    "load_delta_24",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "doy_sin",
+    "doy_cos",
+    "is_weekend",
+    "active_visits",
+    "power_per_visit_mean_kw",
+    "power_per_visit_std_kw",
+    "temp_ambient_mean",
+    "temp_ambient_std",
+    "temp_setpoint_mean",
+    "temp_setpoint_std",
+    "temp_return_mean",
+    "temp_return_std",
+    "temp_supply_mean",
+    "temp_supply_std",
+    "hardware_share_SCC6",
+    "hardware_share_ML3",
+    "hardware_share_DecosVb",
+    "hardware_share_DecosVa",
+    "hardware_share_DecosIIIj",
+    "hardware_share_MP4000",
+    "stack_share_1",
+    "stack_share_2",
+    "stack_share_3",
+    "size_share_20",
+    "size_share_40"
+  ],
+  "selected_groups": [
+    "load_calendar",
+    "reefer_state"
+  ]
+}

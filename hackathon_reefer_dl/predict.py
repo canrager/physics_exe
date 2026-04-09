@@ -11,7 +11,7 @@ if __package__ in {None, ""}:
 import numpy as np
 import torch
 
-from hackathon_reefer_dl.calibration import ResidualCalibrator
+from hackathon_reefer_dl.calibration import PointPredictionCalibrator, ResidualCalibrator
 from hackathon_reefer_dl.data import (
     available_observed_targets,
     build_hourly_feature_table,
@@ -20,7 +20,7 @@ from hackathon_reefer_dl.data import (
 )
 from hackathon_reefer_dl.io_utils import read_json, write_json
 from hackathon_reefer_dl.metrics import composite_metrics
-from hackathon_reefer_dl.model import ReeferTCNForecaster
+from hackathon_reefer_dl.model import build_forecaster
 
 
 def parse_args() -> argparse.Namespace:
@@ -39,9 +39,10 @@ def _device_from_summary(summary: dict[str, object]) -> torch.device:
 
 
 def _infer(
-    model: ReeferTCNForecaster,
+    model: torch.nn.Module,
     sequence: np.ndarray,
     target_calendar: np.ndarray,
+    naive_baseline: np.ndarray,
     device: torch.device,
     batch_size: int = 1024,
 ) -> np.ndarray:
@@ -52,7 +53,8 @@ def _infer(
             end = start + batch_size
             seq_batch = torch.from_numpy(sequence[start:end]).float().to(device, non_blocking=True)
             cal_batch = torch.from_numpy(target_calendar[start:end]).float().to(device, non_blocking=True)
-            pred = model(seq_batch, cal_batch).detach().cpu().numpy()
+            base_batch = torch.from_numpy(naive_baseline[start:end]).float().to(device, non_blocking=True)
+            pred = (base_batch + model(seq_batch, cal_batch, base_batch)).detach().cpu().numpy()
             outputs.append(pred)
     return np.concatenate(outputs, axis=0)
 
@@ -61,6 +63,12 @@ def main() -> None:
     args = parse_args()
     summary = read_json(args.model_dir / "training_summary.json")
     scaler = np.load(args.model_dir / "scaler.npz")
+    point_calibration_path = args.model_dir / "point_calibration.json"
+    point_calibrator = (
+        PointPredictionCalibrator.from_dict(read_json(point_calibration_path))
+        if point_calibration_path.exists()
+        else None
+    )
     calibrator = ResidualCalibrator.from_dict(read_json(args.model_dir / "calibration.json"))
     feature_table = build_hourly_feature_table(args.participant_dir)
     target_times = load_target_timestamps(args.targets)
@@ -78,13 +86,28 @@ def main() -> None:
     device = _device_from_summary(summary)
     ensemble_predictions = []
     for checkpoint_name in summary["final_checkpoints"]:
-        model = ReeferTCNForecaster(**summary["model_kwargs"]).to(device)
+        model = build_forecaster(**summary["model_kwargs"]).to(device)
         checkpoint = torch.load(args.model_dir / checkpoint_name, map_location=device)
         model.load_state_dict(checkpoint["state_dict"])
         ensemble_predictions.append(
-            _infer(model, prediction_arrays["sequence"], prediction_arrays["target_calendar"], device=device)
+            _infer(
+                model,
+                prediction_arrays["sequence"],
+                prediction_arrays["target_calendar"],
+                prediction_arrays["naive_baseline"],
+                device=device,
+            )
         )
-    pred_power = np.mean(np.stack(ensemble_predictions, axis=0), axis=0)
+    raw_pred = np.mean(np.stack(ensemble_predictions, axis=0), axis=0)
+    pred_power = (
+        point_calibrator.predict(
+            timestamps=prediction_arrays["target_times"],
+            raw_pred=raw_pred,
+            naive_baseline=prediction_arrays["naive_baseline"],
+        )
+        if point_calibrator is not None
+        else raw_pred
+    )
     pred_p90 = calibrator.predict_upper(
         timestamps=prediction_arrays["target_times"],
         point_pred=pred_power,

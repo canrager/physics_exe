@@ -1,0 +1,46 @@
+{
+  "last_mean_composite": 116.19979051057422,
+  "selected_groups": [
+    "load_calendar"
+  ],
+  "stages": [
+    {
+      "groups": [
+        "load_calendar"
+      ],
+      "kept": true,
+      "mean_composite": 116.19979051057422,
+      "stage": "load_calendar"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "reefer_state"
+      ],
+      "improvement_vs_previous": -7.629560597776134,
+      "kept": false,
+      "mean_composite": 123.82935110835035,
+      "stage": "load_calendar+reefer_state"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "turnover_age"
+      ],
+      "improvement_vs_previous": -1.5284678596107142,
+      "kept": false,
+      "mean_composite": 117.72825837018493,
+      "stage": "load_calendar+turnover_age"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "external_temperature"
+      ],
+      "improvement_vs_previous": -5.951255564530371,
+      "kept": false,
+      "mean_composite": 122.15104607510459,
+      "stage": "load_calendar+external_temperature"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "last_mean_composite": 104.15374073562727,
+  "selected_groups": [
+    "load_calendar"
+  ],
+  "stages": [
+    {
+      "groups": [
+        "load_calendar"
+      ],
+      "kept": true,
+      "mean_composite": 104.15374073562727,
+      "stage": "load_calendar"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "reefer_state"
+      ],
+      "improvement_vs_previous": -3.476532330021186,
+      "kept": false,
+      "mean_composite": 107.63027306564845,
+      "stage": "load_calendar+reefer_state"
+    }
+  ]
+}
