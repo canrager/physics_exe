@@ -1,0 +1,16 @@
+{
+  "last_mean_composite": 128.83848319692046,
+  "selected_groups": [
+    "load_calendar"
+  ],
+  "stages": [
+    {
+      "groups": [
+        "load_calendar"
+      ],
+      "kept": true,
+      "mean_composite": 128.83848319692046,
+      "stage": "load_calendar"
+    }
+  ]
+}

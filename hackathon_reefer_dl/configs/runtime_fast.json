@@ -1,0 +1,43 @@
+{
+  "history_hours": 336,
+  "forecast_horizon_hours": 24,
+  "cv_fold_hours": 223,
+  "num_cv_folds": 4,
+  "train_target_end": "2025-12-31T00:00:00Z",
+  "feature_group_order": [
+    "load_calendar",
+    "reefer_state",
+    "turnover_age",
+    "external_temperature"
+  ],
+  "ablation_improvement_threshold": 1.0,
+  "seeds": [
+    11,
+    23,
+    41
+  ],
+  "batch_size": 256,
+  "max_epochs": 40,
+  "patience": 6,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.0001,
+  "peak_weight": 1.75,
+  "peak_quantile": 0.85,
+  "device": "cuda",
+  "calibration": {
+    "min_bucket_size": 10
+  },
+  "model": {
+    "hidden_dim": 128,
+    "kernel_size": 3,
+    "dilations": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "dropout": 0.1
+  }
+}
