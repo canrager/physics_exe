@@ -1,0 +1,196 @@
+{
+  "ablation_results": [
+    {
+      "groups": [
+        "load_calendar"
+      ],
+      "kept": true,
+      "mean_composite": 113.96401526834326,
+      "stage": "load_calendar"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "reefer_state"
+      ],
+      "improvement_vs_previous": 1.7416661080912235,
+      "kept": true,
+      "mean_composite": 112.22234916025204,
+      "stage": "load_calendar+reefer_state"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "reefer_state",
+        "turnover_age"
+      ],
+      "improvement_vs_previous": -0.057715734980547495,
+      "kept": false,
+      "mean_composite": 112.28006489523258,
+      "stage": "load_calendar+reefer_state+turnover_age"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "reefer_state",
+        "external_temperature"
+      ],
+      "improvement_vs_previous": -1.5093534809368379,
+      "kept": false,
+      "mean_composite": 113.73170264118887,
+      "stage": "load_calendar+reefer_state+external_temperature"
+    }
+  ],
+  "ablation_seeds": [
+    11,
+    23
+  ],
+  "acceptance_gate": {
+    "beats_lag24": true,
+    "beats_organizer_baseline": true,
+    "passed": false,
+    "under_target_45": false
+  },
+  "config_path": "hackathon_reefer_dl/configs/runtime_tabular_fast.json",
+  "cv_baselines": {
+    "lag24": 150.22490998434543,
+    "organizer_baseline": 141.59344994232794
+  },
+  "cv_fold_metrics": [
+    {
+      "composite": 133.86363869135343,
+      "fold": 0,
+      "mae_all": 222.99360825721226,
+      "mae_peak": 49.9624463754236,
+      "pinball_p90": 36.890503250601036
+    },
+    {
+      "composite": 99.91389805473236,
+      "fold": 1,
+      "mae_all": 111.76989943914913,
+      "mae_peak": 135.00607096461755,
+      "pinball_p90": 17.63563522886267
+    },
+    {
+      "composite": 129.68321966590614,
+      "fold": 2,
+      "mae_all": 145.0778557791831,
+      "mae_peak": 169.30285257772712,
+      "pinball_p90": 31.76718001498235
+    },
+    {
+      "composite": 85.4286402290162,
+      "fold": 3,
+      "mae_all": 103.2186843045578,
+      "mae_peak": 98.66530259087018,
+      "pinball_p90": 21.098536497381225
+    }
+  ],
+  "cv_mean_composite": 112.22234916025204,
+  "data_path": "hackathon_reefer_dl/artifacts/hourly_features.parquet",
+  "device": "cuda",
+  "final_checkpoints": [
+    "model_seed_11.pt",
+    "model_seed_23.pt",
+    "model_seed_41.pt"
+  ],
+  "final_epochs": 22,
+  "forecast_horizon_hours": 24,
+  "history_hours": 336,
+  "model_kwargs": {
+    "dilations": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "dropout": 0.1,
+    "hidden_dim": 128,
+    "input_dim": 38,
+    "kernel_size": 3,
+    "model_type": "tabular_mlp",
+    "target_calendar_dim": 7
+  },
+  "point_calibration": {
+    "alpha": 1.0,
+    "global_bias": 4.1849365234375,
+    "hour_bias": {
+      "0": 1.0013860887096773,
+      "1": 2.760244901063012,
+      "10": 9.475616955366291,
+      "11": 8.386634701588115,
+      "12": 4.095418961321721,
+      "13": 1.9969022156762293,
+      "14": -10.088227819223873,
+      "15": -1.536412973872951,
+      "16": -9.082543545081966,
+      "17": 11.487244652920083,
+      "18": 5.284321769339139,
+      "19": 6.057808297579406,
+      "2": -1.454743932505123,
+      "20": 12.48178550845287,
+      "21": 7.782918622416834,
+      "22": 5.430419921875,
+      "23": 5.513878606980847,
+      "3": -19.387873415087093,
+      "4": -1.496429943647541,
+      "5": -5.898561571465164,
+      "6": 2.880119949090676,
+      "7": 7.339893778816599,
+      "8": 2.4072095527023567,
+      "9": 7.765898157338627
+    },
+    "shrinkage": 24.0
+  },
+  "seeds": [
+    11,
+    23,
+    41
+  ],
+  "selected_feature_names": [
+    "load_kw",
+    "load_lag_24",
+    "load_lag_168",
+    "load_roll_mean_24",
+    "load_roll_std_24",
+    "load_roll_mean_168",
+    "load_roll_std_168",
+    "load_delta_1",
+    "load_delta_24",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "doy_sin",
+    "doy_cos",
+    "is_weekend",
+    "active_visits",
+    "power_per_visit_mean_kw",
+    "power_per_visit_std_kw",
+    "temp_ambient_mean",
+    "temp_ambient_std",
+    "temp_setpoint_mean",
+    "temp_setpoint_std",
+    "temp_return_mean",
+    "temp_return_std",
+    "temp_supply_mean",
+    "temp_supply_std",
+    "hardware_share_SCC6",
+    "hardware_share_ML3",
+    "hardware_share_DecosVb",
+    "hardware_share_DecosVa",
+    "hardware_share_DecosIIIj",
+    "hardware_share_MP4000",
+    "stack_share_1",
+    "stack_share_2",
+    "stack_share_3",
+    "size_share_20",
+    "size_share_40"
+  ],
+  "selected_groups": [
+    "load_calendar",
+    "reefer_state"
+  ]
+}

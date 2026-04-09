@@ -18,7 +18,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 
-from hackathon_reefer_dl.calibration import ResidualCalibrator
+from hackathon_reefer_dl.calibration import PointPredictionCalibrator, ResidualCalibrator
 from hackathon_reefer_dl.common import parse_target_timestamp
 from hackathon_reefer_dl.data import (
     HourlyFeatureTable,
@@ -31,7 +31,7 @@ from hackathon_reefer_dl.data import (
 )
 from hackathon_reefer_dl.io_utils import read_json, write_json
 from hackathon_reefer_dl.metrics import composite_metrics
-from hackathon_reefer_dl.model import ReeferTCNForecaster
+from hackathon_reefer_dl.model import build_forecaster
 
 
 def parse_args() -> argparse.Namespace:
@@ -66,6 +66,7 @@ def _to_loader(
         torch.from_numpy(arrays["sequence"]).float(),
         torch.from_numpy(arrays["target_calendar"]).float(),
         torch.from_numpy(arrays["labels"]).float(),
+        torch.from_numpy(arrays["naive_baseline"]).float(),
     ]
     if weights is not None:
         tensors.append(torch.from_numpy(weights).float())
@@ -80,9 +81,10 @@ def _to_loader(
 
 
 def _infer(
-    model: ReeferTCNForecaster,
+    model: torch.nn.Module,
     sequence: np.ndarray,
     target_calendar: np.ndarray,
+    naive_baseline: np.ndarray,
     device: torch.device,
     batch_size: int,
 ) -> np.ndarray:
@@ -93,13 +95,15 @@ def _infer(
             end = start + batch_size
             seq_batch = torch.from_numpy(sequence[start:end]).float().to(device, non_blocking=True)
             cal_batch = torch.from_numpy(target_calendar[start:end]).float().to(device, non_blocking=True)
-            pred = model(seq_batch, cal_batch).detach().cpu().numpy()
+            base_batch = torch.from_numpy(naive_baseline[start:end]).float().to(device, non_blocking=True)
+            pred = (base_batch + model(seq_batch, cal_batch, base_batch)).detach().cpu().numpy()
             outputs.append(pred)
     return np.concatenate(outputs, axis=0)
 
 
 def _model_kwargs(config: dict[str, Any], input_dim: int, target_calendar_dim: int) -> dict[str, Any]:
     return {
+        "model_type": str(config["model"].get("type", "tcn")),
         "input_dim": input_dim,
         "target_calendar_dim": target_calendar_dim,
         "hidden_dim": int(config["model"]["hidden_dim"]),
@@ -118,7 +122,7 @@ def train_single_seed(
     model_kwargs: dict[str, Any],
 ) -> dict[str, Any]:
     seed_everything(seed)
-    model = ReeferTCNForecaster(**model_kwargs).to(device)
+    model = build_forecaster(**model_kwargs).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=float(config["learning_rate"]),
@@ -154,17 +158,19 @@ def train_single_seed(
         running_loss = 0.0
         sample_count = 0
         for batch in train_loader:
-            sequence_batch, calendar_batch, label_batch, weight_batch = batch
+            sequence_batch, calendar_batch, label_batch, baseline_batch, weight_batch = batch
             sequence_batch = sequence_batch.to(device, non_blocking=True)
             calendar_batch = calendar_batch.to(device, non_blocking=True)
             label_batch = label_batch.to(device, non_blocking=True)
+            baseline_batch = baseline_batch.to(device, non_blocking=True)
             weight_batch = weight_batch.to(device, non_blocking=True)
 
             optimizer.zero_grad(set_to_none=True)
             with torch.cuda.amp.autocast(enabled=use_amp):
-                pred = model(sequence_batch, calendar_batch)
+                pred = baseline_batch + model(sequence_batch, calendar_batch, baseline_batch)
                 loss = torch.mean(torch.abs(pred - label_batch) * weight_batch)
             scaler.scale(loss).backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             scaler.step(optimizer)
             scaler.update()
             running_loss += float(loss.detach().cpu()) * int(label_batch.shape[0])
@@ -174,6 +180,7 @@ def train_single_seed(
             model,
             train_arrays["sequence"],
             train_arrays["target_calendar"],
+            train_arrays["naive_baseline"],
             device=device,
             batch_size=max(int(config["batch_size"]), 1024),
         )
@@ -182,6 +189,7 @@ def train_single_seed(
             model,
             val_arrays["sequence"],
             val_arrays["target_calendar"],
+            val_arrays["naive_baseline"],
             device=device,
             batch_size=max(int(config["batch_size"]), 1024),
         )
@@ -214,6 +222,7 @@ def train_single_seed(
         model,
         val_arrays["sequence"],
         val_arrays["target_calendar"],
+        val_arrays["naive_baseline"],
         device=device,
         batch_size=max(int(config["batch_size"]), 1024),
     )
@@ -234,9 +243,9 @@ def train_fixed_epochs(
     seed: int,
     model_kwargs: dict[str, Any],
     epochs: int,
-) -> ReeferTCNForecaster:
+) -> torch.nn.Module:
     seed_everything(seed)
-    model = ReeferTCNForecaster(**model_kwargs).to(device)
+    model = build_forecaster(**model_kwargs).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=float(config["learning_rate"]),
@@ -262,17 +271,19 @@ def train_fixed_epochs(
     for _ in tqdm(range(epochs), desc=f"Seed {seed}", leave=False):
         model.train()
         for batch in train_loader:
-            sequence_batch, calendar_batch, label_batch, weight_batch = batch
+            sequence_batch, calendar_batch, label_batch, baseline_batch, weight_batch = batch
             sequence_batch = sequence_batch.to(device, non_blocking=True)
             calendar_batch = calendar_batch.to(device, non_blocking=True)
             label_batch = label_batch.to(device, non_blocking=True)
+            baseline_batch = baseline_batch.to(device, non_blocking=True)
             weight_batch = weight_batch.to(device, non_blocking=True)
 
             optimizer.zero_grad(set_to_none=True)
             with torch.cuda.amp.autocast(enabled=use_amp):
-                pred = model(sequence_batch, calendar_batch)
+                pred = baseline_batch + model(sequence_batch, calendar_batch, baseline_batch)
                 loss = torch.mean(torch.abs(pred - label_batch) * weight_batch)
             scaler.scale(loss).backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             scaler.step(optimizer)
             scaler.update()
     return model
@@ -301,6 +312,7 @@ def run_cross_validation(
     oof_pred_parts: list[np.ndarray] = []
     oof_label_parts: list[np.ndarray] = []
     oof_recent_parts: list[np.ndarray] = []
+    oof_baseline_parts: list[np.ndarray] = []
     best_epochs: list[int] = []
     seed_summaries: list[dict[str, Any]] = []
 
@@ -360,16 +372,30 @@ def run_cross_validation(
                 "labels": val_arrays["labels"],
                 "pred": ensemble_pred,
                 "recent_volatility": val_arrays["recent_volatility"],
+                "naive_baseline": val_arrays["naive_baseline"],
             }
         )
         oof_times.extend(val_times)
         oof_label_parts.append(val_arrays["labels"])
         oof_pred_parts.append(ensemble_pred)
         oof_recent_parts.append(val_arrays["recent_volatility"])
+        oof_baseline_parts.append(val_arrays["naive_baseline"])
 
-    oof_pred = np.concatenate(oof_pred_parts, axis=0)
+    oof_raw_pred = np.concatenate(oof_pred_parts, axis=0)
     oof_labels = np.concatenate(oof_label_parts, axis=0)
     oof_recent = np.concatenate(oof_recent_parts, axis=0)
+    oof_baseline = np.concatenate(oof_baseline_parts, axis=0)
+    point_calibrator = PointPredictionCalibrator.fit(
+        timestamps=oof_times,
+        raw_pred=oof_raw_pred,
+        naive_baseline=oof_baseline,
+        y_true=oof_labels,
+    )
+    oof_pred = point_calibrator.predict(
+        timestamps=oof_times,
+        raw_pred=oof_raw_pred,
+        naive_baseline=oof_baseline,
+    )
     calibrator = ResidualCalibrator.fit(
         timestamps=oof_times,
         point_pred=oof_pred,
@@ -380,12 +406,17 @@ def run_cross_validation(
 
     fold_metrics = []
     for fold_output in fold_outputs:
+        point_pred = point_calibrator.predict(
+            timestamps=fold_output["target_times"],
+            raw_pred=fold_output["pred"],
+            naive_baseline=fold_output["naive_baseline"],
+        )
         pred_p90 = calibrator.predict_upper(
             timestamps=fold_output["target_times"],
-            point_pred=fold_output["pred"],
+            point_pred=point_pred,
             recent_volatility=fold_output["recent_volatility"],
         )
-        metrics = composite_metrics(fold_output["labels"], fold_output["pred"], pred_p90)
+        metrics = composite_metrics(fold_output["labels"], point_pred, pred_p90)
         fold_metrics.append({"fold": fold_output["fold"], **metrics.to_dict()})
 
     return {
@@ -394,11 +425,14 @@ def run_cross_validation(
         "mean_composite": float(np.mean([row["composite"] for row in fold_metrics])),
         "best_epochs": best_epochs,
         "seed_summaries": seed_summaries,
+        "point_calibrator": point_calibrator,
         "calibrator": calibrator,
         "oof_predictions": {
             "timestamps": oof_times,
             "labels": oof_labels,
             "pred": oof_pred,
+            "raw_pred": oof_raw_pred,
+            "naive_baseline": oof_baseline,
             "recent_volatility": oof_recent,
             "pred_p90": calibrator.predict_upper(oof_times, oof_pred, oof_recent),
         },
@@ -564,6 +598,7 @@ def main() -> None:
         mean=scaler_mean.astype(np.float32),
         std=scaler_std.astype(np.float32),
     )
+    write_json(args.out_dir / "point_calibration.json", selected_result["point_calibrator"].to_dict())
     write_json(args.out_dir / "calibration.json", selected_result["calibrator"].to_dict())
 
     final_checkpoints = []
@@ -597,6 +632,7 @@ def main() -> None:
         "cv_mean_composite": selected_mean,
         "cv_fold_metrics": selected_result["fold_metrics"],
         "cv_baselines": baseline_scores,
+        "point_calibration": selected_result["point_calibrator"].to_dict(),
         "acceptance_gate": {**acceptance_gate, "passed": gate_passed},
         "final_epochs": final_epochs,
         "model_kwargs": model_kwargs,

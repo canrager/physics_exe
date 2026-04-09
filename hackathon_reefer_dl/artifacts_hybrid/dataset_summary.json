@@ -1,0 +1,11 @@
+{
+  "feature_group_sizes": {
+    "external_temperature": 9,
+    "load_calendar": 16,
+    "reefer_state": 22,
+    "turnover_age": 12
+  },
+  "rows": 8983,
+  "time_max": "2026-01-10T06:00:00Z",
+  "time_min": "2025-01-01T00:00:00Z"
+}

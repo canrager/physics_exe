@@ -1,5 +1,5 @@
 {
-  "last_mean_composite": 136.86180063333063,
+  "last_mean_composite": 109.77061660056981,
   "selected_groups": [
     "load_calendar"
   ],
@@ -9,7 +9,7 @@
         "load_calendar"
       ],
       "kept": true,
-      "mean_composite": 136.86180063333063,
+      "mean_composite": 109.77061660056981,
       "stage": "load_calendar"
     }
   ]

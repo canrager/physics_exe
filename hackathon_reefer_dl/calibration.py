@@ -22,6 +22,101 @@ def _hour_of_day(timestamps: Iterable[datetime]) -> np.ndarray:
     return np.asarray([ts.hour for ts in timestamps], dtype=np.int64)
 
 
+def _point_score(y_true: np.ndarray, pred: np.ndarray) -> float:
+    y_true = np.asarray(y_true, dtype=np.float64)
+    pred = np.asarray(pred, dtype=np.float64)
+    peak_threshold = float(np.quantile(y_true, 0.9))
+    peak_mask = y_true >= peak_threshold
+    mae_all = float(np.mean(np.abs(y_true - pred)))
+    mae_peak = float(np.mean(np.abs(y_true[peak_mask] - pred[peak_mask])))
+    return 0.5 * mae_all + 0.3 * mae_peak
+
+
+@dataclass
+class PointPredictionCalibrator:
+    alpha: float
+    global_bias: float
+    hour_bias: dict[int, float]
+    shrinkage: float = 24.0
+
+    @classmethod
+    def fit(
+        cls,
+        timestamps: list[datetime],
+        raw_pred: np.ndarray,
+        naive_baseline: np.ndarray,
+        y_true: np.ndarray,
+        alpha_grid: np.ndarray | None = None,
+        shrinkage: float = 48.0,
+    ) -> "PointPredictionCalibrator":
+        raw_pred = np.asarray(raw_pred, dtype=np.float64)
+        naive_baseline = np.asarray(naive_baseline, dtype=np.float64)
+        y_true = np.asarray(y_true, dtype=np.float64)
+        if alpha_grid is None:
+            alpha_grid = np.linspace(0.0, 0.75, 16, dtype=np.float64)
+
+        best_alpha = 1.0
+        best_score = float("inf")
+        best_blend = raw_pred
+        for alpha in alpha_grid:
+            candidate = naive_baseline + alpha * (raw_pred - naive_baseline)
+            score = _point_score(y_true, candidate)
+            if score + 1e-12 < best_score:
+                best_score = score
+                best_alpha = float(alpha)
+                best_blend = candidate
+
+        residual = y_true - best_blend
+        global_bias = float(np.median(residual))
+        residual_by_hour: dict[int, list[float]] = defaultdict(list)
+        for ts, resid in zip(timestamps, residual, strict=True):
+            residual_by_hour[ts.hour].append(float(resid))
+
+        hour_bias: dict[int, float] = {}
+        for hour, values in residual_by_hour.items():
+            local_bias = float(np.median(np.asarray(values, dtype=np.float64)))
+            weight = len(values) / (len(values) + shrinkage)
+            hour_bias[hour] = float(weight * local_bias + (1.0 - weight) * global_bias)
+
+        return cls(
+            alpha=best_alpha,
+            global_bias=global_bias,
+            hour_bias=hour_bias,
+            shrinkage=shrinkage,
+        )
+
+    def predict(
+        self,
+        timestamps: list[datetime],
+        raw_pred: np.ndarray,
+        naive_baseline: np.ndarray,
+    ) -> np.ndarray:
+        raw_pred = np.asarray(raw_pred, dtype=np.float64)
+        naive_baseline = np.asarray(naive_baseline, dtype=np.float64)
+        blended = naive_baseline + self.alpha * (raw_pred - naive_baseline)
+        calibrated = np.empty_like(blended, dtype=np.float64)
+        for idx, ts in enumerate(timestamps):
+            calibrated[idx] = blended[idx] + self.hour_bias.get(ts.hour, self.global_bias)
+        return calibrated
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "alpha": self.alpha,
+            "global_bias": self.global_bias,
+            "hour_bias": {str(key): value for key, value in self.hour_bias.items()},
+            "shrinkage": self.shrinkage,
+        }
+
+    @classmethod
+    def from_dict(cls, payload: dict[str, object]) -> "PointPredictionCalibrator":
+        return cls(
+            alpha=float(payload["alpha"]),
+            global_bias=float(payload["global_bias"]),
+            hour_bias={int(key): float(value) for key, value in dict(payload["hour_bias"]).items()},
+            shrinkage=float(payload.get("shrinkage", 48.0)),
+        )
+
+
 @dataclass
 class ResidualCalibrator:
     pred_edges: np.ndarray
@@ -112,4 +207,3 @@ class ResidualCalibrator:
             bucket_q90={str(key): float(value) for key, value in dict(payload["bucket_q90"]).items()},
             min_bucket_size=int(payload.get("min_bucket_size", 10)),
         )
-

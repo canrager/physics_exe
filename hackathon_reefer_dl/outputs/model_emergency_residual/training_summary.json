@@ -1,0 +1,100 @@
+{
+  "ablation_results": [
+    {
+      "groups": [
+        "load_calendar"
+      ],
+      "kept": true,
+      "mean_composite": 104.15374073562727,
+      "stage": "load_calendar"
+    },
+    {
+      "groups": [
+        "load_calendar",
+        "reefer_state"
+      ],
+      "improvement_vs_previous": -3.476532330021186,
+      "kept": false,
+      "mean_composite": 107.63027306564845,
+      "stage": "load_calendar+reefer_state"
+    }
+  ],
+  "ablation_seeds": [
+    23
+  ],
+  "acceptance_gate": {
+    "beats_lag24": true,
+    "beats_organizer_baseline": true,
+    "passed": false,
+    "under_target_45": false
+  },
+  "config_path": "hackathon_reefer_dl/configs/runtime_emergency.json",
+  "cv_baselines": {
+    "lag24": 145.44005571311436,
+    "organizer_baseline": 122.87621679956442
+  },
+  "cv_fold_metrics": [
+    {
+      "composite": 118.30139300024219,
+      "fold": 0,
+      "mae_all": 150.1837990251892,
+      "mae_peak": 120.32918648097827,
+      "pinball_p90": 35.5536877167706
+    },
+    {
+      "composite": 90.00608847101235,
+      "fold": 1,
+      "mae_all": 107.21467405584362,
+      "mae_peak": 108.18571671195652,
+      "pinball_p90": 19.715182147517865
+    }
+  ],
+  "cv_mean_composite": 104.15374073562727,
+  "data_path": "hackathon_reefer_dl/artifacts/hourly_features.parquet",
+  "device": "cuda",
+  "final_checkpoints": [
+    "model_seed_23.pt"
+  ],
+  "final_epochs": 2,
+  "forecast_horizon_hours": 24,
+  "history_hours": 336,
+  "model_kwargs": {
+    "dilations": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "dropout": 0.1,
+    "hidden_dim": 128,
+    "input_dim": 16,
+    "kernel_size": 3,
+    "target_calendar_dim": 7
+  },
+  "seeds": [
+    23
+  ],
+  "selected_feature_names": [
+    "load_kw",
+    "load_lag_24",
+    "load_lag_168",
+    "load_roll_mean_24",
+    "load_roll_std_24",
+    "load_roll_mean_168",
+    "load_roll_std_168",
+    "load_delta_1",
+    "load_delta_24",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "doy_sin",
+    "doy_cos",
+    "is_weekend"
+  ],
+  "selected_groups": [
+    "load_calendar"
+  ]
+}
