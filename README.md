@@ -36,6 +36,21 @@ If you want to point to a different release location:
 uv run main.py --reefer-zip path/to/reefer_release.zip --target-csv path/to/target_timestamps.csv
 ```
 
+## Weather Analysis
+
+To generate the separate weather-impact report from the extracted directories:
+
+```bash
+uv run weather_impact_analysis.py
+```
+
+By default this reads:
+
+- `../participant_package/participant_package/reefer_release/reefer_release.csv`
+- `../participant_package/participant_package/wetterdaten/`
+
+and writes a dedicated report to `outputs/weather_analysis/report.html`.
+
 ## Challenge Understanding
 
 - The forecasting target is the combined hourly electricity demand of plugged-in reefer containers.

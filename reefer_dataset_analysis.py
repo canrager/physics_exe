@@ -128,6 +128,8 @@ def parse_decimal(value: str | None) -> float | None:
     stripped = value.strip()
     if not stripped:
         return None
+    if stripped.upper() == "NULL":
+        return None
     return float(stripped.replace(",", "."))
 
 
