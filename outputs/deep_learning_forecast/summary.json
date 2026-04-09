@@ -1,0 +1,83 @@
+{
+  "final_training_epochs": {
+    "stage1": 18,
+    "stage2": 10
+  },
+  "holdout_summary": {
+    "deep_model_ensemble_calibrated": {
+      "mae_all": 76.90962219238281,
+      "mae_peak": 76.90962219238281,
+      "pinball_p90": 24.60016632080078,
+      "score": 66.4477310180664
+    },
+    "deep_model_ensemble_raw": {
+      "mae_all": 76.90962219238281,
+      "mae_peak": 76.90962219238281,
+      "pinball_p90": 13.615476608276367,
+      "score": 64.25079307556153
+    },
+    "ridge_flattened": {
+      "mae_all": 135.1332244873047,
+      "mae_peak": 135.1332244873047,
+      "pinball_p90": 35.98883819580078,
+      "score": 115.30434722900391
+    },
+    "yesterday_same_hour": {
+      "mae_all": 122.62820434570312,
+      "mae_peak": 122.62820434570312,
+      "pinball_p90": 26.893619537353516,
+      "score": 103.4812873840332
+    }
+  },
+  "p90_calibrator": {
+    "alpha": 1.5,
+    "beta": 35.921627807617185
+  },
+  "test_summary": {
+    "deep_model_ensemble_calibrated": {
+      "mae_all": 70.344482421875,
+      "mae_peak": 70.344482421875,
+      "pinball_p90": 19.969310760498047,
+      "score": 60.26944808959961
+    },
+    "ridge_flattened": {
+      "mae_all": 212.0369110107422,
+      "mae_peak": 212.0369110107422,
+      "pinball_p90": 80.5040283203125,
+      "score": 185.73033447265627
+    },
+    "yesterday_same_hour": {
+      "mae_all": 44.10258102416992,
+      "mae_peak": 44.10258102416992,
+      "pinball_p90": 22.314197540283203,
+      "score": 39.744904327392575
+    }
+  },
+  "tuning_summary": {
+    "deep_model_ensemble_raw": {
+      "mae_all": 205.4785614013672,
+      "mae_peak": 281.8012390136719,
+      "pinball_p90": 52.257336934407554,
+      "score": 197.73111979166666
+    },
+    "ridge_flattened": {
+      "mae_all": 335.294189453125,
+      "mae_peak": 342.3825988769531,
+      "pinball_p90": 72.64591725667317,
+      "score": 284.8910578409831
+    },
+    "yesterday_same_hour": {
+      "mae_all": 195.1519012451172,
+      "mae_peak": 157.59709930419922,
+      "pinball_p90": 39.45516713460287,
+      "score": 152.74611384073896
+    }
+  },
+  "warnings": {
+    "best_simple_holdout_score": 103.4812873840332,
+    "deep_model_beats_holdout_baselines": true,
+    "deep_model_holdout_score": 66.4477310180664,
+    "deep_model_test_score": 60.26944808959961,
+    "message": "Deep model beat the best simple baseline on the final holdout."
+  }
+}

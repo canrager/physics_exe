@@ -1,0 +1,26 @@
+{
+  "device": "cuda",
+  "grad_clip": 1.0,
+  "input_noise_std": 0.01,
+  "num_workers": 0,
+  "output_dir": "outputs/deep_learning_forecast",
+  "patience": 15,
+  "quick_run": false,
+  "resolved_device": "cuda",
+  "ridge_alpha": 20.0,
+  "seeds": [
+    17,
+    23,
+    41
+  ],
+  "stage1_batch_size": 256,
+  "stage1_epochs": 80,
+  "stage1_lr": 0.001,
+  "stage2_batch_size": 128,
+  "stage2_epochs": 60,
+  "stage2_lr": 0.0002,
+  "test_csv": "/data/dust/user/salamana/physics-exe/outputs/preprocessed_dataset/test_hourly.csv",
+  "trainval_csv": "/data/dust/user/salamana/physics-exe/outputs/preprocessed_dataset/trainval_hourly.csv",
+  "weather_channel_dropout": 0.1,
+  "weight_decay": 0.0001
+}

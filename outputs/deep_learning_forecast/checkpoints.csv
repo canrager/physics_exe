@@ -1,0 +1,4 @@
+seed,checkpoint_path
+17,outputs/deep_learning_forecast/deep_model_seed_17.pt
+23,outputs/deep_learning_forecast/deep_model_seed_23.pt
+41,outputs/deep_learning_forecast/deep_model_seed_41.pt

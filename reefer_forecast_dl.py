@@ -6,6 +6,7 @@ import csv
 import json
 import math
 import random
+import sys
 from contextlib import nullcontext
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -271,7 +272,8 @@ class AttentionPool1d(nn.Module):
     def forward(self, x: torch.Tensor, mask: torch.Tensor | None = None) -> torch.Tensor:
         logits = self.score(x).squeeze(1)
         if mask is not None:
-            logits = logits.masked_fill(~mask, -1e9)
+            masked_value = torch.finfo(logits.dtype).min
+            logits = logits.masked_fill(~mask, masked_value)
         weights = torch.softmax(logits, dim=-1)
         return torch.sum(x * weights.unsqueeze(1), dim=-1)
 
@@ -312,7 +314,7 @@ class MaskAwareTemporalBlock(nn.Module):
 
     def forward(self, x: torch.Tensor, time_mask: torch.Tensor) -> torch.Tensor:
         residual = x
-        mask_channel = time_mask.unsqueeze(1).float()
+        mask_channel = time_mask.unsqueeze(1).to(dtype=x.dtype)
         x = x * mask_channel
         x = torch.cat([x, mask_channel], dim=1)
         x = self.conv1(x)
@@ -376,7 +378,9 @@ class WeatherBranch(nn.Module):
 
     def forward(self, weather: torch.Tensor, weather_mask: torch.Tensor) -> torch.Tensor:
         if self.training and self.channel_dropout > 0.0:
-            keep = (torch.rand(weather.shape[0], weather.shape[1], 1, device=weather.device) >= self.channel_dropout).float()
+            keep = (
+                torch.rand(weather.shape[0], weather.shape[1], 1, device=weather.device) >= self.channel_dropout
+            ).to(dtype=weather.dtype)
             weather = weather * keep
             weather_mask = weather_mask * keep
         weather = weather * weather_mask
@@ -583,6 +587,48 @@ def choose_device(requested: str) -> torch.device:
     if requested == "cuda":
         return torch.device("cuda" if torch.cuda.is_available() else "cpu")
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def validate_cuda_runtime(device: torch.device, requested: str) -> torch.device:
+    if device.type != "cuda":
+        return device
+    try:
+        probe = torch.randn(8, device=device)
+        _ = probe + torch.randn_like(probe)
+        torch.cuda.synchronize(device)
+        return device
+    except Exception as exc:
+        message = str(exc)
+        if requested == "auto":
+            print(
+                "CUDA preflight failed; falling back to CPU.\n"
+                f"python={sys.executable}\n"
+                f"torch={torch.__version__}\n"
+                f"cuda={torch.version.cuda}\n"
+                f"error={message}",
+                flush=True,
+            )
+            return torch.device("cpu")
+        device_name = "unknown"
+        capability = "unknown"
+        try:
+            device_name = torch.cuda.get_device_name(0)
+            capability = ".".join(str(part) for part in torch.cuda.get_device_capability(0))
+        except Exception:
+            pass
+        raise RuntimeError(
+            "CUDA is visible, but this PyTorch build cannot execute kernels on the current GPU.\n"
+            f"python={sys.executable}\n"
+            f"torch={torch.__version__}\n"
+            f"cuda={torch.version.cuda}\n"
+            f"gpu={device_name}\n"
+            f"compute_capability={capability}\n"
+            "If you are on a V100 / sm_70 node, do not use the repo .venv for CUDA.\n"
+            "Use the cluster system Python instead, for example:\n"
+            "deactivate\n"
+            "PYTHONUNBUFFERED=1 python forecast_power.py --device cuda --output-dir outputs/deep_learning_forecast\n"
+            f"Original CUDA error: {message}"
+        ) from exc
 
 
 def to_float32_array(values: list[list[float]] | list[np.ndarray], shape: tuple[int, ...] | None = None) -> np.ndarray:
@@ -1650,6 +1696,7 @@ def main() -> None:
     maybe_shorten_run(args)
     ensure_output_dir(args.output_dir)
     device = choose_device(args.device)
+    device = validate_cuda_runtime(device, requested=args.device)
     print(f"using_device={device}", flush=True)
     print("loading datasets", flush=True)
     trainval_table = load_preprocessed_table(args.trainval_csv)
