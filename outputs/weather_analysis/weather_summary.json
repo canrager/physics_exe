@@ -1,0 +1,233 @@
+{
+  "overlap_summary": {
+    "label_hour_count": 8403,
+    "weather_hour_count": 3204,
+    "weather_feature_count": 17,
+    "label_range_utc": [
+      "2025-01-01T00:00:00Z",
+      "2026-01-10T06:00:00Z"
+    ],
+    "weather_range_utc": [
+      "2025-09-24T10:00:00Z",
+      "2026-02-23T14:00:00Z"
+    ],
+    "overlap_range_utc": [
+      "2025-09-24T10:00:00Z",
+      "2026-01-10T06:00:00Z"
+    ]
+  },
+  "weather_source_summary": {
+    "source_files": [
+      {
+        "file_name": "CTH_Temperatur_VC_Halle3 Okt 25 - 23 Feb 26.csv",
+        "metric": "temperature",
+        "location": "vc_halle3",
+        "hourly_observations": 3166
+      },
+      {
+        "file_name": "CTH_Temperatur_Zentralgate  Okt 25 - 23 Feb 26.csv",
+        "metric": "temperature",
+        "location": "zentralgate",
+        "hourly_observations": 3200
+      },
+      {
+        "file_name": "CTH_Wind_VC_Halle3  Okt 25 - 23 Feb 26.csv",
+        "metric": "wind_speed",
+        "location": "vc_halle3",
+        "hourly_observations": 3168
+      },
+      {
+        "file_name": "CTH_Wind_Zentralgate  Okt 25 - 23 Feb 26.csv",
+        "metric": "wind_speed",
+        "location": "zentralgate",
+        "hourly_observations": 3201
+      },
+      {
+        "file_name": "CTH_Windrichtung_VC_Halle3  Okt 25 - 23 Feb 26.csv",
+        "metric": "wind_direction",
+        "location": "vc_halle3",
+        "hourly_observations": 2690
+      },
+      {
+        "file_name": "CTH_Windrichtung_Zentralgate  Okt 25 - 23 Feb 26.csv",
+        "metric": "wind_direction",
+        "location": "zentralgate",
+        "hourly_observations": 2688
+      }
+    ],
+    "hourly_timestamp_count": 3204
+  },
+  "top_same_hour_correlations": [
+    {
+      "feature": "weather_temperature_vc_halle3_c",
+      "pearson_correlation": 0.5566686064622504,
+      "absolute_correlation": 0.5566686064622504
+    },
+    {
+      "feature": "weather_temperature_mean_c",
+      "pearson_correlation": 0.3767011984286726,
+      "absolute_correlation": 0.3767011984286726
+    },
+    {
+      "feature": "weather_temperature_zentralgate_c",
+      "pearson_correlation": 0.23077295592486566,
+      "absolute_correlation": 0.23077295592486566
+    },
+    {
+      "feature": "weather_wind_direction_vc_halle3_cos",
+      "pearson_correlation": -0.21038461409805553,
+      "absolute_correlation": 0.21038461409805553
+    },
+    {
+      "feature": "weather_wind_direction_mean_cos",
+      "pearson_correlation": -0.19250433485658125,
+      "absolute_correlation": 0.19250433485658125
+    },
+    {
+      "feature": "weather_wind_direction_zentralgate_cos",
+      "pearson_correlation": -0.17233935579526832,
+      "absolute_correlation": 0.17233935579526832
+    },
+    {
+      "feature": "weather_wind_direction_zentralgate_consistency",
+      "pearson_correlation": -0.09789250595973266,
+      "absolute_correlation": 0.09789250595973266
+    },
+    {
+      "feature": "weather_wind_speed_vc_halle3",
+      "pearson_correlation": -0.08073257728222046,
+      "absolute_correlation": 0.08073257728222046
+    },
+    {
+      "feature": "weather_wind_direction_vc_halle3_consistency",
+      "pearson_correlation": 0.06948183751409522,
+      "absolute_correlation": 0.06948183751409522
+    },
+    {
+      "feature": "weather_wind_direction_mean_consistency",
+      "pearson_correlation": -0.03887037764929543,
+      "absolute_correlation": 0.03887037764929543
+    }
+  ],
+  "window_recommendations": [
+    {
+      "feature": "weather_temperature_vc_halle3_c",
+      "peak_history_window_hours": 72.0,
+      "peak_mean_abs_future_correlation": 0.6231453483350088,
+      "efficient_history_window_hours": 51.0,
+      "efficient_window_score": 0.5922349571704476
+    },
+    {
+      "feature": "weather_temperature_mean_c",
+      "peak_history_window_hours": 72.0,
+      "peak_mean_abs_future_correlation": 0.6200684085343697,
+      "efficient_history_window_hours": 44.0,
+      "efficient_window_score": 0.5903481556443233
+    },
+    {
+      "feature": "weather_temperature_zentralgate_c",
+      "peak_history_window_hours": 67.0,
+      "peak_mean_abs_future_correlation": 0.5744907061474939,
+      "efficient_history_window_hours": 46.0,
+      "efficient_window_score": 0.5487664808128306
+    },
+    {
+      "feature": "weather_wind_direction_vc_halle3_cos",
+      "peak_history_window_hours": 72.0,
+      "peak_mean_abs_future_correlation": 0.29259985809396966,
+      "efficient_history_window_hours": 60.0,
+      "efficient_window_score": 0.27854415708922825
+    },
+    {
+      "feature": "weather_wind_direction_mean_cos",
+      "peak_history_window_hours": 72.0,
+      "peak_mean_abs_future_correlation": 0.29003287073683837,
+      "efficient_history_window_hours": 62.0,
+      "efficient_window_score": 0.27614473291553016
+    },
+    {
+      "feature": "weather_wind_direction_zentralgate_cos",
+      "peak_history_window_hours": 72.0,
+      "peak_mean_abs_future_correlation": 0.2849640368161598,
+      "efficient_history_window_hours": 63.0,
+      "efficient_window_score": 0.2711528720933187
+    },
+    {
+      "feature": "weather_wind_direction_zentralgate_consistency",
+      "peak_history_window_hours": 40.0,
+      "peak_mean_abs_future_correlation": 0.26111615632027113,
+      "efficient_history_window_hours": 26.0,
+      "efficient_window_score": 0.24895083872678425
+    },
+    {
+      "feature": "weather_wind_speed_vc_halle3",
+      "peak_history_window_hours": 71.0,
+      "peak_mean_abs_future_correlation": 0.22254965861422496,
+      "efficient_history_window_hours": 57.0,
+      "efficient_window_score": 0.21170812137903203
+    },
+    {
+      "feature": "weather_wind_speed_spread",
+      "peak_history_window_hours": 50.0,
+      "peak_mean_abs_future_correlation": 0.16865973203634518,
+      "efficient_history_window_hours": 43.0,
+      "efficient_window_score": 0.16127423156948698
+    },
+    {
+      "feature": "weather_temperature_spread_c",
+      "peak_history_window_hours": 51.0,
+      "peak_mean_abs_future_correlation": 0.1641884726458701,
+      "efficient_history_window_hours": 43.0,
+      "efficient_window_score": 0.15676389722225173
+    },
+    {
+      "feature": "weather_wind_speed_zentralgate",
+      "peak_history_window_hours": 49.0,
+      "peak_mean_abs_future_correlation": 0.15256199149940378,
+      "efficient_history_window_hours": 42.0,
+      "efficient_window_score": 0.14535667882086556
+    },
+    {
+      "feature": "weather_wind_speed_mean",
+      "peak_history_window_hours": 49.0,
+      "peak_mean_abs_future_correlation": 0.1375495058958398,
+      "efficient_history_window_hours": 42.0,
+      "efficient_window_score": 0.13218346803273612
+    },
+    {
+      "feature": "weather_wind_direction_zentralgate_sin",
+      "peak_history_window_hours": 45.0,
+      "peak_mean_abs_future_correlation": 0.1361449792256819,
+      "efficient_history_window_hours": 35.0,
+      "efficient_window_score": 0.12949750877898866
+    },
+    {
+      "feature": "weather_wind_direction_vc_halle3_consistency",
+      "peak_history_window_hours": 45.0,
+      "peak_mean_abs_future_correlation": 0.113778683809317,
+      "efficient_history_window_hours": 37.0,
+      "efficient_window_score": 0.1083266267177081
+    },
+    {
+      "feature": "weather_wind_direction_mean_sin",
+      "peak_history_window_hours": 45.0,
+      "peak_mean_abs_future_correlation": 0.11203559196553832,
+      "efficient_history_window_hours": 36.0,
+      "efficient_window_score": 0.10708617503122995
+    },
+    {
+      "feature": "weather_wind_direction_mean_consistency",
+      "peak_history_window_hours": 52.0,
+      "peak_mean_abs_future_correlation": 0.10346228212852056,
+      "efficient_history_window_hours": 30.0,
+      "efficient_window_score": 0.09862781416223025
+    },
+    {
+      "feature": "weather_wind_direction_vc_halle3_sin",
+      "peak_history_window_hours": 48.0,
+      "peak_mean_abs_future_correlation": 0.08760784751456595,
+      "efficient_history_window_hours": 37.0,
+      "efficient_window_score": 0.08389897124625449
+    }
+  ]
+}

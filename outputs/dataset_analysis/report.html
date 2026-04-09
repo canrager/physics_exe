@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reefer Dataset Analysis</title>
+  <style>
+    body { margin: 0; background: linear-gradient(180deg, #fffdf9 0%, #f6efe3 100%); color: #2a2623; font-family: "Segoe UI", Arial, sans-serif; }
+    main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 60px; }
+    h1 { margin: 0 0 8px; font-size: 2.4rem; }
+    h2 { margin: 0 0 12px; font-size: 1.2rem; }
+    p, td, th { line-height: 1.55; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0 28px; }
+    .card { background: #fff7ed; border: 1px solid #dfcfbb; border-radius: 18px; padding: 18px; box-shadow: 0 10px 28px rgba(48, 36, 20, 0.06); margin-bottom: 18px; }
+    .tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #dfcfbb; text-align: left; }
+    img { width: 100%; border-radius: 12px; border: 1px solid #dfcfbb; background: white; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Reefer Dataset Analysis</h1>
+    <p>This report converts the participant reefer release into an hourly target-aligned analysis table and highlights the strongest first-pass feature relationships.</p>
+    <div class="grid">
+      <section class="card"><h2>Raw Data</h2><p><strong>Rows:</strong> 3,774,557</p><p><strong>Hours:</strong> 8,403</p><p><strong>Range:</strong> 2025-01-01T00:00:00Z to 2026-01-10T06:00:00Z</p></section>
+      <section class="card"><h2>Targets</h2><p><strong>Timestamps:</strong> 223</p><p><strong>Range:</strong> 2026-01-01T00:00:00Z to 2026-01-10T06:00:00Z</p></section>
+      <section class="card"><h2>Schema Notes</h2><p>The raw file uses semicolons, decimal commas, and field names that differ slightly from the challenge markdown.</p></section>
+    </div>
+    <section class="tables">
+      <div class="card"><h2>Top Correlations</h2><table><thead><tr><th>Feature</th><th>Pearson r</th></tr></thead><tbody><tr><td>active_container_count</td><td>0.795</td></tr>
+<tr><td>share_stack_tier_1</td><td>-0.599</td></tr>
+<tr><td>mean_stack_tier</td><td>0.566</td></tr>
+<tr><td>share_stack_tier_3</td><td>0.487</td></tr>
+<tr><td>share_stack_tier_2</td><td>0.465</td></tr>
+<tr><td>mean_ambient_minus_setpoint_c</td><td>0.405</td></tr>
+<tr><td>mean_temperature_ambient_c</td><td>0.389</td></tr>
+<tr><td>month</td><td>0.378</td></tr>
+<tr><td>mean_return_minus_supply_c</td><td>0.376</td></tr>
+<tr><td>day_of_year</td><td>0.373</td></tr>
+<tr><td>share_hardware_decosiiih</td><td>0.344</td></tr>
+<tr><td>share_hardware_ml5</td><td>0.330</td></tr></tbody></table></div>
+      <div class="card"><h2>Top Importances</h2><table><thead><tr><th>Feature</th><th>MAE Increase (kW)</th></tr></thead><tbody><tr><td>active_container_count</td><td>216.197</td></tr>
+<tr><td>day_of_year</td><td>137.126</td></tr>
+<tr><td>mean_temperature_setpoint_c</td><td>105.713</td></tr>
+<tr><td>month</td><td>91.144</td></tr>
+<tr><td>mean_temperature_return_c</td><td>44.317</td></tr>
+<tr><td>mean_temperature_supply_c</td><td>32.832</td></tr>
+<tr><td>mean_stack_tier</td><td>28.518</td></tr>
+<tr><td>mean_ambient_minus_setpoint_c</td><td>12.897</td></tr>
+<tr><td>share_stack_tier_2</td><td>6.386</td></tr>
+<tr><td>share_hardware_decosiiie</td><td>4.134</td></tr>
+<tr><td>share_hardware_scc6</td><td>3.520</td></tr>
+<tr><td>mean_return_minus_supply_c</td><td>3.333</td></tr></tbody></table></div>
+    </section>
+    <section class="card"><h2>Hourly Aggregate Reefer Power</h2><img src="label_timeseries.svg" alt="Hourly Aggregate Reefer Power" /></section>
+<section class="card"><h2>Distribution Of Hourly Reefer Load</h2><img src="label_distribution.svg" alt="Distribution Of Hourly Reefer Load" /></section>
+<section class="card"><h2>Average Load By Hour Of Day</h2><img src="hour_of_day_profile.svg" alt="Average Load By Hour Of Day" /></section>
+<section class="card"><h2>Day-Hour Heatmap Of Average Load</h2><img src="day_hour_heatmap.svg" alt="Day-Hour Heatmap Of Average Load" /></section>
+<section class="card"><h2>Top Feature Correlations To The Label</h2><img src="feature_label_correlations.svg" alt="Top Feature Correlations To The Label" /></section>
+<section class="card"><h2>Permutation Importance On Holdout</h2><img src="feature_importance.svg" alt="Permutation Importance On Holdout" /></section>
+<section class="card"><h2>Correlation Matrix For Top Features</h2><img src="feature_correlation_heatmap.svg" alt="Correlation Matrix For Top Features" /></section>
+<section class="card"><h2>Top Feature Relationships To The Label</h2><img src="top_feature_relationships.svg" alt="Top Feature Relationships To The Label" /></section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Weather Impact Analysis</title>
+  <style>
+    body { margin: 0; background: linear-gradient(180deg, #fffdf9 0%, #eef5f0 100%); color: #2a2623; font-family: "Segoe UI", Arial, sans-serif; }
+    main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 56px; }
+    h1 { margin: 0 0 8px; font-size: 2.4rem; }
+    h2 { margin: 0 0 12px; font-size: 1.2rem; }
+    p, td, th { line-height: 1.55; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0 28px; }
+    .card { background: #fff7ed; border: 1px solid #dfcfbb; border-radius: 18px; padding: 18px; box-shadow: 0 10px 28px rgba(48, 36, 20, 0.06); margin-bottom: 18px; }
+    .tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #dfcfbb; text-align: left; }
+    img { width: 100%; border-radius: 12px; border: 1px solid #dfcfbb; background: white; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Weather Impact Analysis</h1>
+    <p>This report focuses only on the weather streams and how they relate to hourly reefer power, both at the same hour and as historical context for predicting the next 24 hours.</p>
+    <div class="grid">
+      <section class="card"><h2>Overlap Window</h2><p><strong>Label range:</strong> 2025-01-01T00:00:00Z to 2026-01-10T06:00:00Z</p><p><strong>Weather range:</strong> 2025-09-24T10:00:00Z to 2026-02-23T14:00:00Z</p><p><strong>Usable overlap:</strong> 2025-09-24T10:00:00Z to 2026-01-10T06:00:00Z</p></section>
+      <section class="card"><h2>Hourly Coverage</h2><p><strong>Label hours:</strong> 8,403</p><p><strong>Weather hours:</strong> 3,204</p><p><strong>Weather features:</strong> 17</p></section>
+      <section class="card"><h2>Interpretation</h2><p>Same-hour correlations show actual-weather impact. History-window scores show how much observed weather context is useful at forecast time for the next 24 hours.</p></section>
+    </div>
+    <section class="tables">
+      <div class="card"><h2>Top Same-Hour Weather Correlations</h2><table><thead><tr><th>Feature</th><th>Pearson r</th></tr></thead><tbody><tr><td>temperature VC Halle 3 c</td><td>0.557</td></tr>
+<tr><td>temperature mean (C)</td><td>0.377</td></tr>
+<tr><td>temperature Zentralgate c</td><td>0.231</td></tr>
+<tr><td>wind direction VC Halle 3 cos</td><td>-0.210</td></tr>
+<tr><td>wind direction mean (C)os</td><td>-0.193</td></tr>
+<tr><td>wind direction Zentralgate cos</td><td>-0.172</td></tr>
+<tr><td>wind direction Zentralgate consistency</td><td>-0.098</td></tr>
+<tr><td>wind speed VC Halle 3</td><td>-0.081</td></tr>
+<tr><td>wind direction VC Halle 3 consistency</td><td>0.069</td></tr>
+<tr><td>wind direction mean (C)onsistency</td><td>-0.039</td></tr></tbody></table></div>
+      <div class="card"><h2>Recommended History Windows</h2><table><thead><tr><th>Feature</th><th>Efficient window</th><th>Peak window</th><th>Peak score</th></tr></thead><tbody><tr><td>temperature VC Halle 3 c</td><td>51 h</td><td>72 h</td><td>0.623</td></tr>
+<tr><td>temperature mean (C)</td><td>44 h</td><td>72 h</td><td>0.620</td></tr>
+<tr><td>temperature Zentralgate c</td><td>46 h</td><td>67 h</td><td>0.574</td></tr>
+<tr><td>wind direction VC Halle 3 cos</td><td>60 h</td><td>72 h</td><td>0.293</td></tr>
+<tr><td>wind direction mean (C)os</td><td>62 h</td><td>72 h</td><td>0.290</td></tr>
+<tr><td>wind direction Zentralgate cos</td><td>63 h</td><td>72 h</td><td>0.285</td></tr>
+<tr><td>wind direction Zentralgate consistency</td><td>26 h</td><td>40 h</td><td>0.261</td></tr>
+<tr><td>wind speed VC Halle 3</td><td>57 h</td><td>71 h</td><td>0.223</td></tr>
+<tr><td>wind speed spread</td><td>43 h</td><td>50 h</td><td>0.169</td></tr>
+<tr><td>temperature spread (C)</td><td>43 h</td><td>51 h</td><td>0.164</td></tr></tbody></table></div>
+    </section>
+    <section class="card"><h2>Same-Hour Weather Correlations To Power</h2><img src="same_hour_weather_correlations.svg" alt="Same-Hour Weather Correlations To Power" /></section>
+<section class="card"><h2>Same-Hour Weather Relationships</h2><img src="same_hour_weather_relationships.svg" alt="Same-Hour Weather Relationships" /></section>
+<section class="card"><h2>Past Weather Window Usefulness</h2><img src="weather_history_window_usefulness.svg" alt="Past Weather Window Usefulness" /></section>
+<section class="card"><h2>Forecast-Horizon Sensitivity</h2><img src="weather_history_horizon_heatmap.svg" alt="Forecast-Horizon Sensitivity" /></section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,235 @@
+{
+  "challenge_understanding": {
+    "task": "Forecast combined hourly reefer power and provide both a point estimate and an upper p90 estimate.",
+    "evaluation_weights": {
+      "mae_all": 0.5,
+      "mae_peak": 0.3,
+      "pinball_p90": 0.2
+    }
+  },
+  "raw_dataset_summary": {
+    "row_count": 3774557,
+    "hourly_count": 8403,
+    "timestamp_min_utc": "2025-01-01T00:00:00Z",
+    "timestamp_max_utc": "2026-01-10T06:00:00Z",
+    "hardware_type_cardinality": 19,
+    "container_size_cardinality": 4,
+    "stack_tier_cardinality": 3,
+    "top_hardware_types": [
+      [
+        "SCC6",
+        1567014
+      ],
+      [
+        "ML3",
+        949395
+      ],
+      [
+        "DecosVb",
+        298827
+      ],
+      [
+        "DecosVa",
+        284520
+      ],
+      [
+        "DecosIIIj",
+        224217
+      ],
+      [
+        "MP4000",
+        183207
+      ],
+      [
+        "ML5",
+        96871
+      ],
+      [
+        "DecosIIIh",
+        65362
+      ]
+    ],
+    "top_container_sizes": [
+      [
+        "40",
+        3540811
+      ],
+      [
+        "20",
+        230111
+      ],
+      [
+        "NULL",
+        1994
+      ],
+      [
+        "45",
+        1641
+      ]
+    ],
+    "top_stack_tiers": [
+      [
+        "1",
+        1754239
+      ],
+      [
+        "2",
+        1204029
+      ],
+      [
+        "3",
+        803818
+      ]
+    ],
+    "field_missing_counts": {
+      "HardwareType": 0,
+      "TemperatureSetPoint": 0,
+      "TemperatureReturn": 0,
+      "ContainerSize": 0,
+      "TemperatureAmbient": 0,
+      "AvPowerCons": 0,
+      "RemperatureSupply": 0,
+      "stack_tier": 12471,
+      "EventTime": 0
+    },
+    "raw_format_notes": {
+      "delimiter": "semicolon",
+      "decimal_separator": "comma",
+      "raw_column_examples": [
+        "AvPowerCons",
+        "RemperatureSupply"
+      ],
+      "label_definition": "sum(AvPowerCons) / 1000 by EventTime hour"
+    }
+  },
+  "target_summary": {
+    "row_count": 223,
+    "timestamp_min_utc": "2026-01-01T00:00:00Z",
+    "timestamp_max_utc": "2026-01-10T06:00:00Z"
+  },
+  "top_feature_correlations": [
+    {
+      "feature": "active_container_count",
+      "pearson_correlation": 0.7946206241539664,
+      "absolute_correlation": 0.7946206241539664
+    },
+    {
+      "feature": "share_stack_tier_1",
+      "pearson_correlation": -0.5985512221621067,
+      "absolute_correlation": 0.5985512221621067
+    },
+    {
+      "feature": "mean_stack_tier",
+      "pearson_correlation": 0.5655164798861761,
+      "absolute_correlation": 0.5655164798861761
+    },
+    {
+      "feature": "share_stack_tier_3",
+      "pearson_correlation": 0.48705892085897545,
+      "absolute_correlation": 0.48705892085897545
+    },
+    {
+      "feature": "share_stack_tier_2",
+      "pearson_correlation": 0.4645120150997797,
+      "absolute_correlation": 0.4645120150997797
+    },
+    {
+      "feature": "mean_ambient_minus_setpoint_c",
+      "pearson_correlation": 0.4050469530762251,
+      "absolute_correlation": 0.4050469530762251
+    },
+    {
+      "feature": "mean_temperature_ambient_c",
+      "pearson_correlation": 0.38889112703717876,
+      "absolute_correlation": 0.38889112703717876
+    },
+    {
+      "feature": "month",
+      "pearson_correlation": 0.3778534729362221,
+      "absolute_correlation": 0.3778534729362221
+    },
+    {
+      "feature": "mean_return_minus_supply_c",
+      "pearson_correlation": 0.3761821474609872,
+      "absolute_correlation": 0.3761821474609872
+    },
+    {
+      "feature": "day_of_year",
+      "pearson_correlation": 0.3734791015027584,
+      "absolute_correlation": 0.3734791015027584
+    },
+    {
+      "feature": "share_hardware_decosiiih",
+      "pearson_correlation": 0.3436476780284267,
+      "absolute_correlation": 0.3436476780284267
+    },
+    {
+      "feature": "share_hardware_ml5",
+      "pearson_correlation": 0.3296854788073369,
+      "absolute_correlation": 0.3296854788073369
+    }
+  ],
+  "top_feature_importances": [
+    {
+      "feature": "active_container_count",
+      "mae_increase_kw": 216.19685506012848,
+      "absolute_weight": 214.2266484159391
+    },
+    {
+      "feature": "day_of_year",
+      "mae_increase_kw": 137.12609456289636,
+      "absolute_weight": 237.00803956044717
+    },
+    {
+      "feature": "mean_temperature_setpoint_c",
+      "mae_increase_kw": 105.7132745451256,
+      "absolute_weight": 159.38365221242904
+    },
+    {
+      "feature": "month",
+      "mae_increase_kw": 91.14448044663503,
+      "absolute_weight": 116.60742269167264
+    },
+    {
+      "feature": "mean_temperature_return_c",
+      "mae_increase_kw": 44.31728196451125,
+      "absolute_weight": 96.57883337125654
+    },
+    {
+      "feature": "mean_temperature_supply_c",
+      "mae_increase_kw": 32.83219816264959,
+      "absolute_weight": 80.56000093855286
+    },
+    {
+      "feature": "mean_stack_tier",
+      "mae_increase_kw": 28.518459885776352,
+      "absolute_weight": 49.51476907382932
+    },
+    {
+      "feature": "mean_ambient_minus_setpoint_c",
+      "mae_increase_kw": 12.897012746875632,
+      "absolute_weight": 70.54944517645228
+    },
+    {
+      "feature": "share_stack_tier_2",
+      "mae_increase_kw": 6.3855915315307215,
+      "absolute_weight": 22.764991918135053
+    },
+    {
+      "feature": "share_hardware_decosiiie",
+      "mae_increase_kw": 4.134308338564253,
+      "absolute_weight": 14.14704844418374
+    },
+    {
+      "feature": "share_hardware_scc6",
+      "mae_increase_kw": 3.5201194439069496,
+      "absolute_weight": 58.7548348588966
+    },
+    {
+      "feature": "mean_return_minus_supply_c",
+      "mae_increase_kw": 3.332500655793595,
+      "absolute_weight": 34.719758545734706
+    }
+  ],
+  "ridge_test_mae_kw": 123.18985042857021
+}
