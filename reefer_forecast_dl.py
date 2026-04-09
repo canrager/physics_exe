@@ -668,12 +668,17 @@ def load_preprocessed_table(path: Path) -> ForecastTable:
 
 def fit_history_scaler(history: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     flattened = np.transpose(history, (0, 2, 1)).reshape(-1, history.shape[1])
-    center = np.nanpercentile(flattened, 50.0, axis=0)
-    q25 = np.nanpercentile(flattened, 25.0, axis=0)
-    q75 = np.nanpercentile(flattened, 75.0, axis=0)
-    scale = q75 - q25
-    scale = np.where(np.isfinite(scale) & (scale > 1e-6), scale, 1.0)
-    return center.astype(np.float32), scale.astype(np.float32)
+    center = np.zeros(flattened.shape[1], dtype=np.float32)
+    scale = np.ones(flattened.shape[1], dtype=np.float32)
+    for column_index in range(flattened.shape[1]):
+        values = flattened[:, column_index]
+        values = values[np.isfinite(values)]
+        if values.size == 0:
+            continue
+        q25, median, q75 = np.percentile(values, [25.0, 50.0, 75.0])
+        center[column_index] = np.float32(median)
+        scale[column_index] = np.float32(max(q75 - q25, 1e-3))
+    return center, scale
 
 
 def transform_history(history: np.ndarray, center: np.ndarray, scale: np.ndarray) -> np.ndarray:
@@ -684,12 +689,17 @@ def transform_history(history: np.ndarray, center: np.ndarray, scale: np.ndarray
 
 
 def fit_feature_scaler(features: np.ndarray) -> FeatureScaler:
-    center = np.nanpercentile(features, 50.0, axis=0)
-    q25 = np.nanpercentile(features, 25.0, axis=0)
-    q75 = np.nanpercentile(features, 75.0, axis=0)
-    scale = q75 - q25
-    scale = np.where(np.isfinite(scale) & (scale > 1e-6), scale, 1.0)
-    return FeatureScaler(center=center.astype(np.float32), scale=scale.astype(np.float32))
+    center = np.zeros(features.shape[1], dtype=np.float32)
+    scale = np.ones(features.shape[1], dtype=np.float32)
+    for column_index in range(features.shape[1]):
+        values = features[:, column_index]
+        values = values[np.isfinite(values)]
+        if values.size == 0:
+            continue
+        q25, median, q75 = np.percentile(values, [25.0, 50.0, 75.0])
+        center[column_index] = np.float32(median)
+        scale[column_index] = np.float32(max(q75 - q25, 1e-3))
+    return FeatureScaler(center=center, scale=scale)
 
 
 def transform_features(features: np.ndarray, scaler: FeatureScaler) -> np.ndarray:
@@ -903,7 +913,7 @@ def train_one_stage(
     train_loader = make_loader(train_data, batch_size=batch_size, shuffle=True, num_workers=num_workers, device=device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs)
-    scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+    scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
     best_epoch = 1
     best_score = float("inf")
     bad_epochs = 0
@@ -943,7 +953,7 @@ def train_one_stage(
             print(
                 f"  epoch {epoch:03d} use_weather={int(use_weather)} "
                 f"train_score={train_score:.4f}"
-            )
+            , flush=True)
             best_epoch = epoch
             best_state = copy.deepcopy({name: tensor.detach().cpu() for name, tensor in model.state_dict().items()})
             continue
@@ -964,7 +974,7 @@ def train_one_stage(
             f"mae_all={val_metrics['mae_all']:.4f} "
             f"mae_peak={val_metrics['mae_peak']:.4f} "
             f"pinball={val_metrics['pinball_p90']:.4f}"
-        )
+        , flush=True)
         if val_metrics["score"] + 1e-6 < best_score:
             best_score = val_metrics["score"]
             best_epoch = epoch
@@ -997,7 +1007,7 @@ def fit_fold_model(
         input_noise_std=args.input_noise_std,
         weather_channel_dropout=args.weather_channel_dropout,
     ).to(device)
-    print(f"seed={seed} stage1 train_rows={prepared_train.num_rows} val_rows={prepared_val.num_rows}")
+    print(f"seed={seed} stage1 train_rows={prepared_train.num_rows} val_rows={prepared_val.num_rows}", flush=True)
     stage1_state, stage1_epoch = train_one_stage(
         model=model,
         train_data=prepared_train,
@@ -1022,7 +1032,7 @@ def fit_fold_model(
     if complete_train_mask.any() and complete_val_mask.any():
         stage2_train = subset_prepared(prepared_train, complete_train_mask)
         stage2_val = subset_prepared(prepared_val, complete_val_mask)
-        print(f"seed={seed} stage2 train_rows={stage2_train.num_rows} val_rows={stage2_val.num_rows}")
+        print(f"seed={seed} stage2 train_rows={stage2_train.num_rows} val_rows={stage2_val.num_rows}", flush=True)
         stage2_state, stage2_epoch = train_one_stage(
             model=model,
             train_data=stage2_train,
@@ -1289,7 +1299,7 @@ def run_forward_windows(
         print(
             f"window={window.name} train_rows={len(train_indices)} val_rows={len(val_indices)} "
             f"holdout={int(window.is_holdout)}"
-        )
+        , flush=True)
         baseline_predictions = [
             evaluate_yesterday_baseline(trainval_table, train_indices, trainval_table, val_indices),
             evaluate_ridge_baseline(trainval_table, train_indices, trainval_table, val_indices, alpha=args.ridge_alpha),
@@ -1492,7 +1502,10 @@ def evaluate_final_test(
 
     deep_predictions: list[FoldPrediction] = []
     for seed in args.seeds:
-        print(f"final_train seed={seed} stage1_epochs={args.final_stage1_epochs} stage2_epochs={args.final_stage2_epochs}")
+        print(
+            f"final_train seed={seed} stage1_epochs={args.final_stage1_epochs} stage2_epochs={args.final_stage2_epochs}",
+            flush=True,
+        )
         artifact, scalers = fit_final_model(
             table=trainval_table,
             seed=seed,
@@ -1637,14 +1650,14 @@ def main() -> None:
     maybe_shorten_run(args)
     ensure_output_dir(args.output_dir)
     device = choose_device(args.device)
-    print(f"using_device={device}")
-    print("loading datasets")
+    print(f"using_device={device}", flush=True)
+    print("loading datasets", flush=True)
     trainval_table = load_preprocessed_table(args.trainval_csv)
     test_table = load_preprocessed_table(args.test_csv)
     print(
         f"trainval_rows={trainval_table.num_rows} test_rows={test_table.num_rows} "
         f"weather_complete_trainval={int(trainval_table.weather_complete.sum())}"
-    )
+    , flush=True)
 
     write_json(
         args.output_dir / "config.json",
@@ -1682,7 +1695,7 @@ def main() -> None:
         "stage2": args.final_stage2_epochs,
     }
     write_json(args.output_dir / "summary.json", summary)
-    print(json.dumps(summary["warnings"], indent=2))
+    print(json.dumps(summary["warnings"], indent=2), flush=True)
 
 
 if __name__ == "__main__":
