@@ -1,39 +1,41 @@
 # Approach
 
-This submission treats the task as a strict 24-hour-ahead forecast.
+This synced submission treats the task as a strict 24-hour-ahead forecast and uses the strongest public-scoring model developed in the repo.
 
 ## Main idea
 
-- Build admissible hourly reefer features from the participant package only.
-- Train deep-learning forecast candidates in `hackathon_reefer_dl/`.
-- Keep a stronger legacy forecast artifact as the anchor forecast.
-- Improve peak-hour behavior with a lightweight tail blend.
+- Build a day-ahead-safe wide lag-feature dataset from the participant package.
+- Repair the large internal 2025 history gap before constructing lag windows.
+- Predict a residual over `label_power_kw_tminus24h` instead of the full load directly.
+- Train a compact XGBoost regressor with extra weight on high-load hours.
+- Derive `pred_p90_kw` from the empirical positive training residual uplift.
 
 ## Final submission used here
 
-The submitted `predictions.csv` is a blend of two existing forecast candidates:
+The bundled `predictions.csv` is produced by `code/hackathon_reefer_dl/compact_xgb_peak_forecast.py`.
 
-- anchor forecast: the stronger average-error forecast from `outputs/results/predictions.csv`
-- tail specialist: `hackathon_reefer_dl/outputs/predictions_tabular_emergency.csv`
+Model characteristics:
 
-Blending rule:
+- input: compact subset of the wide preprocessed lag table
+- target: `label_power_kw - label_power_kw_tminus24h`
+- learner: shallow residual XGBoost
+- peak emphasis: rows above the training 85th percentile receive 4x weight
+- upper forecast: `pred_power_kw + q90(max(y_train - pred_train, 0))`
 
-- rank hours by anchor `pred_power_kw`
-- take the top 15 ranked hours
-- for those hours only, replace the point forecast with
-  - `0.275 * anchor + 0.725 * tail_specialist`
-- keep the anchor `pred_p90_kw` as the base upper forecast
-- for the swapped tail hours, use
-  - `0.95 * anchor_p90 + 0.05 * tail_specialist_p90`
-- always enforce `pred_p90_kw >= pred_power_kw`
+Measured public result for this synced file:
+
+- composite: `29.948833`
+- mae_all: `32.350326`
+- mae_peak: `39.900770`
+- pinball_p90: `9.017197`
 
 ## Files included
 
-- `predictions.csv`: final submission file
-- `code/`: code used during development and final blending
+- `predictions.csv`: synced public-winning submission file
+- `code/`: code used during development and final public-winning run
 
 ## Notes
 
-- The reusable blending utility is `code/hackathon_reefer_dl/blend_existing_candidates.py`.
-- The deep-learning forecasting subproject lives in `code/hackathon_reefer_dl/`.
-- A legacy forecasting experiment script is included as `code/reefer_forecast_dl.py`.
+- The preprocessing path is `code/preprocess_dataset.py` plus `code/reefer_preprocessing.py`.
+- The deep-learning forecasting subproject remains in `code/hackathon_reefer_dl/` for reference.
+- The earlier blend-based candidate path is still present in the code bundle, but it is no longer the synced default.
