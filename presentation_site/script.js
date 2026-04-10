@@ -55,6 +55,35 @@ function renderFeatureNotes() {
   });
 }
 
+function renderOutlookMetrics() {
+  if (!data || !Array.isArray(data.outlookMetrics)) return;
+  const grid = document.getElementById("outlook-metrics");
+  if (!grid) return;
+  grid.innerHTML = "";
+  data.outlookMetrics.forEach((metric) => {
+    const card = document.createElement("article");
+    card.className = "metric-card";
+    card.innerHTML = `
+      <p class="metric-card-label">${metric.label}</p>
+      <p class="metric-card-value">${metric.value}</p>
+      <p class="metric-card-detail">${metric.detail}</p>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderOutlookList(targetId, items) {
+  if (!Array.isArray(items)) return;
+  const list = document.getElementById(targetId);
+  if (!list) return;
+  list.innerHTML = "";
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    list.appendChild(li);
+  });
+}
+
 function renderExperimentTable() {
   if (!data || !Array.isArray(data.experimentRows)) return;
   const body = document.getElementById("experiment-table-body");
@@ -153,6 +182,9 @@ function init() {
   renderChallengeFacts();
   renderBlendChips();
   renderFeatureNotes();
+  renderOutlookMetrics();
+  renderOutlookList("outlook-points", data?.outlookPoints);
+  renderOutlookList("outlook-steps", data?.outlookSteps);
   renderExperimentTable();
   renderTakeaways();
   renderGeneratedAt();

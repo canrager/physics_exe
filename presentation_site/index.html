@@ -26,6 +26,7 @@
       <a href="#challenge">Challenge</a>
       <a href="#forecast">Forecast</a>
       <a href="#signals">Signals</a>
+      <a href="#outlook">Outlook</a>
       <a href="#model">Model</a>
       <a href="#experiments">Experiments</a>
     </nav>
@@ -35,12 +36,12 @@
     <section class="hero reveal">
       <div class="hero-copy">
         <p class="eyebrow">FSL Reefer Peak-Load Challenge</p>
-        <h1>Turning the `hackathon_reefer_dl` solution into a presentation-ready story.</h1>
+        <h1>Turning the new anchor-tail hybrid into a presentation-ready story.</h1>
         <p class="hero-text">
           This site summarizes the day-ahead reefer-load forecasting pipeline built in
-          <code>hackathon_reefer_dl</code>: strict <code>T-24h</code> features, a residual tabular MLP,
-          calibrated upper-risk estimates, and the lag-aware final blend that produced the strongest public result
-          in the repo.
+          <code>hackathon_reefer_dl</code>: a strong anchor forecast for the full window, a peak specialist for the
+          hardest hours, and a selective handoff strategy that produced the current strongest public result in the
+          repo.
         </p>
         <div class="chip-row chip-row-hero" id="hero-facts">
           <span class="chip chip-static">223 public target hours</span>
@@ -111,40 +112,40 @@
     <section id="forecast" class="content-section reveal">
       <div class="section-heading">
         <p class="eyebrow">Forecast Window</p>
-        <h2>The final blend smooths the raw network output without losing the peak-sensitive structure.</h2>
+        <h2>A small expert handoff on only 15 hours creates the new step-change in public performance.</h2>
       </div>
 
       <div class="forecast-grid">
         <figure class="plot-card plot-card-wide">
           <img
             src="assets/plots/january_forecast.svg"
-            alt="Public January 2026 forecast chart with actual load, raw model, winning final blend, and p90 band."
+            alt="Public January 2026 forecast chart with actual load, strong anchor forecast, winning anchor-tail hybrid, and p90 band."
           >
           <figcaption>
-            The main headline plot: actual load vs the raw residual MLP, the winning final blend, and the calibrated
-            <code>p90</code> band across January 1-10, 2026.
+            The main headline plot: actual load vs the strong anchor forecast, the winning anchor-tail hybrid, and the
+            calibrated <code>p90</code> band across January 1-10, 2026. Orange markers show the routed tail hours.
           </figcaption>
         </figure>
 
         <figure class="plot-card">
           <img
             src="assets/plots/daily_mae.svg"
-            alt="Daily mean absolute error across the public window comparing lag24, tabular MLP, and final blend."
+            alt="Daily mean absolute error across the public window comparing the anchor forecast, the previous winner, and the new hybrid."
           >
           <figcaption>
-            Day-by-day MAE shows where the blend reduces volatility relative to both the lag baseline and the raw
-            model.
+            Day-by-day MAE shows that the new hybrid improves on both the strong anchor and the previous public winner,
+            especially late in the window.
           </figcaption>
         </figure>
 
         <figure class="plot-card">
           <img
             src="assets/plots/peak_scatter.svg"
-            alt="Scatter plot of actual versus predicted load for the winning final blend with peak hours highlighted."
+            alt="Scatter plot of actual versus predicted load for the winning anchor-tail hybrid with routed hours highlighted."
           >
           <figcaption>
-            Peak handling matters because the evaluation metric explicitly rewards it. The orange points are the
-            highest-load hours in the public window.
+            Peak handling matters because the evaluation metric explicitly rewards it. The orange points are the hours
+            that were handed off to the tail specialist.
           </figcaption>
         </figure>
       </div>
@@ -191,56 +192,107 @@
       </div>
     </section>
 
+    <section id="outlook" class="content-section reveal">
+      <div class="section-heading">
+        <p class="eyebrow">Outlook</p>
+        <h2>Next step: add 24h weather forecasts as model features, not just post-hoc analysis.</h2>
+      </div>
+
+      <div class="two-col-grid">
+        <article class="panel">
+          <p class="panel-label">Proxy Study</p>
+          <h3>Noisy forecast weather still keeps most of the predictive temperature signal.</h3>
+          <p>
+            The participant package gives us realized weather, not archived forecasts. To approximate a realistic
+            day-ahead setup, we take the existing weather series, inject controlled noise, and treat the result as a
+            synthetic 24-hour forecast available earlier in time.
+          </p>
+          <ul class="plain-list" id="outlook-points"></ul>
+        </article>
+
+        <article class="panel">
+          <p class="panel-label">Why It Matters</p>
+          <h3>Forecast weather is a realistic next feature family for both the anchor and the tail specialist.</h3>
+          <div class="outlook-metric-grid" id="outlook-metrics"></div>
+          <ul class="plain-list" id="outlook-steps"></ul>
+        </article>
+      </div>
+
+      <div class="two-col-grid">
+        <figure class="plot-card">
+          <img
+            src="assets/plots/forecast_weather_proxy_scatter.svg"
+            alt="Side-by-side comparison of realized temperature versus load and noisy forecast-proxy temperature versus load."
+          >
+          <figcaption>
+            Left: realized VC Halle 3 temperature vs load. Right: the same target-hour weather after adding noise and
+            treating it as a synthetic 24h forecast proxy.
+          </figcaption>
+        </figure>
+
+        <figure class="plot-card">
+          <img
+            src="assets/plots/forecast_weather_proxy_noise_sweep.svg"
+            alt="Line chart showing how temperature correlation with load changes as more forecast noise is added."
+          >
+          <figcaption>
+            Even with increasingly noisy proxy forecasts, temperature remains strongly correlated with load across the
+            full weather-overlap window.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section id="model" class="content-section reveal">
       <div class="section-heading">
         <p class="eyebrow">ML Model</p>
-        <h2>A transparent forecasting stack: residual learning, calibration, then a lag-aware blend.</h2>
+        <h2>A transparent forecasting stack: anchor first, tail specialist second, then a narrow expert handoff.</h2>
       </div>
 
       <div class="two-col-grid diagrams-grid">
         <article class="panel panel-diagram">
           <p class="panel-label">Pipeline Diagram</p>
-          <h3>Strict T-24 feature flow</h3>
+          <h3>Strict T-24 anchor-to-tail flow</h3>
           <div class="flow-diagram">
             <div class="flow-node">Raw reefer + weather files</div>
             <div class="flow-arrow"></div>
             <div class="flow-node">Hourly feature store</div>
             <div class="flow-arrow"></div>
-            <div class="flow-node">336h history ending at T-24h</div>
+            <div class="flow-node">Anchor forecast across all 223 public hours</div>
             <div class="flow-arrow"></div>
-            <div class="flow-node flow-node-accent">Residual tabular MLP</div>
+            <div class="flow-node flow-node-accent">Rank the 15 heaviest anchor hours</div>
             <div class="flow-arrow"></div>
-            <div class="flow-node">Point + P90 calibration</div>
+            <div class="flow-node">Route only those hours to the tabular peak specialist</div>
             <div class="flow-arrow"></div>
-            <div class="flow-node flow-node-highlight">Tercile-aware final blend</div>
+            <div class="flow-node flow-node-highlight">Blend anchor + tail into the winning hybrid</div>
           </div>
           <p class="diagram-note">
-            The leakage guardrail is explicit: every target hour only sees information that would already be known
-            24 hours earlier.
+            The leakage guardrail is still explicit: the specialist itself uses the strict <code>T-24h</code> setup,
+            while the routing layer only chooses which already-computed hours deserve specialist treatment.
           </p>
         </article>
 
         <article class="panel panel-diagram">
-          <p class="panel-label">Network Diagram</p>
-          <h3>Residual tabular MLP</h3>
+          <p class="panel-label">Routing Diagram</p>
+          <h3>Anchor-and-tail hybrid</h3>
           <div class="network-diagram">
             <div class="input-stack">
-              <div class="network-node">Last admissible feature row</div>
-              <div class="network-node">7 target-time calendar values</div>
-              <div class="network-node">Lag baseline scalar</div>
+              <div class="network-node">Anchor forecast for every public hour</div>
+              <div class="network-node">Peak ranking over anchor predictions</div>
+              <div class="network-node">Top-15 tail-hour mask</div>
             </div>
             <div class="network-core">
-              <div class="network-branch">Linear shortcut</div>
-              <div class="network-branch network-branch-accent">3-layer MLP<br>LayerNorm + SiLU + dropout</div>
+              <div class="network-branch">Keep anchor on 208 hours</div>
+              <div class="network-branch network-branch-accent">Apply the tabular peak specialist on 15 routed hours</div>
             </div>
             <div class="output-stack">
-              <div class="network-node">Learned residual</div>
-              <div class="network-node network-node-highlight">Baseline + residual = point forecast</div>
+              <div class="network-node">Point blend on routed rows</div>
+              <div class="network-node network-node-highlight">Final hybrid forecast + calibrated p90</div>
             </div>
           </div>
           <p class="diagram-note">
-            The model predicts a correction on top of a strong day-ahead baseline instead of trying to invent the full
-            load curve from scratch.
+            The strongest overall score now comes from selective expert routing, not from asking one model to solve
+            every hour equally well.
           </p>
         </article>
       </div>
@@ -248,18 +300,18 @@
       <div class="detail-grid">
         <article class="panel detail-panel">
           <p class="panel-label">Winning Recipe</p>
-          <h3>Best public result = raw MLP output plus reproducible post-processing.</h3>
+          <h3>Best public result = strong anchor forecast plus a targeted tail specialist.</h3>
           <p>
-            The public score improved materially when the model output was blended with the lag-24 baseline according
-            to low, medium, and high load terciles. That kept the method simple, explainable, and well aligned with
-            the challenge metric.
+            The public score improved materially when the system stopped treating every hour the same. The anchor model
+            handles the overall curve, then only the highest-risk hours are partially replaced by the specialist that is
+            better at the extreme tail.
           </p>
           <div class="chip-row" id="blend-chips"></div>
         </article>
 
         <article class="panel detail-panel">
           <p class="panel-label">Feature Strategy</p>
-          <h3>Load and calendar features were the most robust under the hackathon runtime budget.</h3>
+          <h3>The routing works because the anchor and the tail specialist are good at different things.</h3>
           <ul class="plain-list" id="feature-notes"></ul>
         </article>
       </div>
@@ -268,17 +320,17 @@
     <section id="experiments" class="content-section reveal">
       <div class="section-heading">
         <p class="eyebrow">Experiment Ladder</p>
-        <h2>The final jump came from disciplined blending, not from a larger black-box model.</h2>
+        <h2>The final jump came from expert routing, not from blindly scaling up complexity.</h2>
       </div>
 
       <div class="two-col-grid experiments-grid">
         <figure class="plot-card">
           <img
             src="assets/plots/model_ladder.svg"
-            alt="Horizontal bar chart comparing public composite scores across submission variants."
+            alt="Horizontal bar chart comparing public composite scores across forecast roles and variants."
           >
           <figcaption>
-            A compact view of the public-window progression from the organizer baseline to the winning final blend.
+            A compact view of the public-window progression from the organizer baseline to the new anchor-tail hybrid.
           </figcaption>
         </figure>
 

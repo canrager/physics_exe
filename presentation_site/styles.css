@@ -283,6 +283,13 @@ main {
   gap: 1rem;
 }
 
+.outlook-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
 .metric-card {
   padding: 1.15rem 1.1rem;
   border: 1px solid var(--line);
@@ -541,6 +548,7 @@ main {
   .signals-grid,
   .takeaway-grid,
   .metric-grid,
+  .outlook-metric-grid,
   .two-col-grid,
   .detail-grid {
     grid-template-columns: 1fr;
