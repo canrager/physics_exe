@@ -1,0 +1,67 @@
+[
+  {
+    "name": "lag24",
+    "model": "baseline",
+    "n_features": 1,
+    "composite": 53.02899604453751,
+    "mae_all": 44.1025820334396,
+    "mae_peak": 96.6321437669837,
+    "pinball_p90": 9.940309488612971,
+    "cuts": [
+      829.2547607421875,
+      874.6636352539062
+    ]
+  },
+  {
+    "name": "base_plus_label_hist",
+    "model": "hgb_residual",
+    "n_features": 190,
+    "composite": 89.42843663516669,
+    "mae_all": 71.50402558330998,
+    "mae_peak": 171.01805579144022,
+    "pinball_p90": 11.85503553039824,
+    "cuts": [
+      781.2211303710938,
+      826.1314697265625
+    ]
+  },
+  {
+    "name": "base_plus_label_hist",
+    "model": "xgb_residual",
+    "n_features": 190,
+    "composite": 109.05183862130947,
+    "mae_all": 95.12814207889573,
+    "mae_peak": 197.3004442297894,
+    "pinball_p90": 11.488171564623912,
+    "cuts": [
+      748.5687866210938,
+      797.7222290039062
+    ]
+  },
+  {
+    "name": "wide_no_weather",
+    "model": "hgb_residual",
+    "n_features": 1942,
+    "composite": 65.94937205677029,
+    "mae_all": 53.4699397749965,
+    "mae_peak": 123.33244522758152,
+    "pinball_p90": 11.073343004987912,
+    "cuts": [
+      840.0856323242188,
+      871.2946166992188
+    ]
+  },
+  {
+    "name": "wide_no_weather",
+    "model": "xgb_residual",
+    "n_features": 1942,
+    "composite": 53.0373177684978,
+    "mae_all": 41.91530701504694,
+    "mae_peak": 100.3908983313519,
+    "pinball_p90": 9.81197380784381,
+    "cuts": [
+      841.3020629882812,
+      878.5474853515625
+    ]
+  }
+]

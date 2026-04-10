@@ -1,0 +1,312 @@
+[
+  {
+    "window": "n/a",
+    "features": "baseline_load_kw",
+    "model": "carry_current_load",
+    "n_features": 1,
+    "composite": 55.61887947491583,
+    "mae_all": 44.1025820334396,
+    "mae_peak": 96.6321437669837,
+    "pinball_p90": 22.88972664050457
+  },
+  {
+    "window": "all_history",
+    "features": "core",
+    "model": "hgb_residual",
+    "n_features": 49,
+    "composite": 97.49152167582237,
+    "mae_all": 119.70946033973865,
+    "mae_peak": 110.35841170601223,
+    "pinball_p90": 22.64633997074691
+  },
+  {
+    "window": "all_history",
+    "features": "core",
+    "model": "xgb_residual",
+    "n_features": 49,
+    "composite": 79.42929539487663,
+    "mae_all": 103.86910887577073,
+    "mae_peak": 79.46174687924592,
+    "pinball_p90": 18.281084466087442
+  },
+  {
+    "window": "all_history",
+    "features": "no_weather",
+    "model": "hgb_residual",
+    "n_features": 50,
+    "composite": 92.8954461354869,
+    "mae_all": 117.20365159928531,
+    "mae_peak": 99.66510540506114,
+    "pinball_p90": 21.970443571629538
+  },
+  {
+    "window": "all_history",
+    "features": "no_weather",
+    "model": "xgb_residual",
+    "n_features": 50,
+    "composite": 100.84037706050475,
+    "mae_all": 119.11093399663677,
+    "mae_peak": 124.55113153872283,
+    "pinball_p90": 19.59785300284757
+  },
+  {
+    "window": "all_history",
+    "features": "all",
+    "model": "hgb_residual",
+    "n_features": 59,
+    "composite": 86.38919186067572,
+    "mae_all": 108.41189670990401,
+    "mae_peak": 93.24340554942255,
+    "pinball_p90": 21.051109204484742
+  },
+  {
+    "window": "all_history",
+    "features": "all",
+    "model": "xgb_residual",
+    "n_features": 59,
+    "composite": 92.84809225343082,
+    "mae_all": 112.30557292031601,
+    "mae_peak": 109.58704409391984,
+    "pinball_p90": 19.095962825484335
+  },
+  {
+    "window": "from_2025_09_24",
+    "features": "core",
+    "model": "hgb_residual",
+    "n_features": 49,
+    "composite": 59.00118793472674,
+    "mae_all": 79.38706990742362,
+    "mae_peak": 56.04555876358695,
+    "pinball_p90": 12.469926759694188
+  },
+  {
+    "window": "from_2025_09_24",
+    "features": "core",
+    "model": "xgb_residual",
+    "n_features": 49,
+    "composite": 40.77752948837592,
+    "mae_all": 57.456611941213566,
+    "mae_peak": 34.31764287533967,
+    "pinball_p90": 8.769653275836207
+  },
+  {
+    "window": "from_2025_09_24",
+    "features": "no_weather",
+    "model": "hgb_residual",
+    "n_features": 50,
+    "composite": 55.17525497713199,
+    "mae_all": 77.60693332004975,
+    "mae_peak": 46.80529254415761,
+    "pinball_p90": 11.65100276929915
+  },
+  {
+    "window": "from_2025_09_24",
+    "features": "no_weather",
+    "model": "xgb_residual",
+    "n_features": 50,
+    "composite": 47.20738717559439,
+    "mae_all": 69.47629454745305,
+    "mae_peak": 34.68140179177989,
+    "pinball_p90": 10.324096821669505
+  },
+  {
+    "window": "from_2025_09_24",
+    "features": "all",
+    "model": "hgb_residual",
+    "n_features": 59,
+    "composite": 55.33378714909723,
+    "mae_all": 74.54928383591998,
+    "mae_peak": 51.79307224439538,
+    "pinball_p90": 12.606117789093151
+  },
+  {
+    "window": "from_2025_09_24",
+    "features": "all",
+    "model": "xgb_residual",
+    "n_features": 59,
+    "composite": 53.78459809664561,
+    "mae_all": 75.5344468189462,
+    "mae_peak": 45.58566682235055,
+    "pinball_p90": 11.708373202336743
+  },
+  {
+    "window": "from_2025_10_01",
+    "features": "core",
+    "model": "hgb_residual",
+    "n_features": 49,
+    "composite": 59.31192047322928,
+    "mae_all": 75.46122871706838,
+    "mae_peak": 64.7494533372962,
+    "pinball_p90": 10.782350567531159
+  },
+  {
+    "window": "from_2025_10_01",
+    "features": "core",
+    "model": "xgb_residual",
+    "n_features": 49,
+    "composite": 47.53618627362652,
+    "mae_all": 67.61149864025715,
+    "mae_peak": 39.50043786090353,
+    "pinball_p90": 9.40152797613443
+  },
+  {
+    "window": "from_2025_10_01",
+    "features": "no_weather",
+    "model": "hgb_residual",
+    "n_features": 50,
+    "composite": 58.463139797068635,
+    "mae_all": 85.76633142035104,
+    "mae_peak": 44.0195657481318,
+    "pinball_p90": 11.870521812267901
+  },
+  {
+    "window": "from_2025_10_01",
+    "features": "no_weather",
+    "model": "xgb_residual",
+    "n_features": 50,
+    "composite": 53.610662215246414,
+    "mae_all": 73.32409230048346,
+    "mae_peak": 49.64497972571331,
+    "pinball_p90": 10.275610736453478
+  },
+  {
+    "window": "from_2025_10_01",
+    "features": "all",
+    "model": "hgb_residual",
+    "n_features": 59,
+    "composite": 53.85173199295696,
+    "mae_all": 81.50166464493414,
+    "mae_peak": 35.81580120584239,
+    "pinball_p90": 11.780796543685844
+  },
+  {
+    "window": "from_2025_10_01",
+    "features": "all",
+    "model": "xgb_residual",
+    "n_features": 59,
+    "composite": 55.11979011532669,
+    "mae_all": 73.43756514066003,
+    "mae_peak": 53.47449261209239,
+    "pinball_p90": 11.793298806844803
+  },
+  {
+    "window": "from_2025_11_01",
+    "features": "core",
+    "model": "hgb_residual",
+    "n_features": 49,
+    "composite": 51.04532982059984,
+    "mae_all": 76.05071446713845,
+    "mae_peak": 35.93350352411685,
+    "pinball_p90": 11.199607648977782
+  },
+  {
+    "window": "from_2025_11_01",
+    "features": "core",
+    "model": "xgb_residual",
+    "n_features": 49,
+    "composite": 53.37010278505432,
+    "mae_all": 76.00430804197029,
+    "mae_peak": 44.55918817934783,
+    "pinball_p90": 10.000961551324133
+  },
+  {
+    "window": "from_2025_11_01",
+    "features": "no_weather",
+    "model": "hgb_residual",
+    "n_features": 50,
+    "composite": 54.83282572269719,
+    "mae_all": 78.65391780015065,
+    "mae_peak": 43.88753078294837,
+    "pinball_p90": 11.698037938686765
+  },
+  {
+    "window": "from_2025_11_01",
+    "features": "no_weather",
+    "model": "xgb_residual",
+    "n_features": 50,
+    "composite": 54.82098555280954,
+    "mae_all": 85.74478354689252,
+    "mae_peak": 32.14838707965353,
+    "pinball_p90": 11.520388277336084
+  },
+  {
+    "window": "from_2025_11_01",
+    "features": "all",
+    "model": "hgb_residual",
+    "n_features": 59,
+    "composite": 53.20846358030203,
+    "mae_all": 77.73012963538747,
+    "mae_peak": 40.13658075747283,
+    "pinball_p90": 11.512122676832258
+  },
+  {
+    "window": "from_2025_11_01",
+    "features": "all",
+    "model": "xgb_residual",
+    "n_features": 59,
+    "composite": 50.4635509158064,
+    "mae_all": 72.33575165752873,
+    "mae_peak": 40.94307277513587,
+    "pinball_p90": 10.06376627250637
+  },
+  {
+    "window": "from_2025_12_01",
+    "features": "core",
+    "model": "hgb_residual",
+    "n_features": 49,
+    "composite": 55.53255296083518,
+    "mae_all": 95.51136950847814,
+    "mae_peak": 17.740812882133152,
+    "pinball_p90": 12.273121709780838
+  },
+  {
+    "window": "from_2025_12_01",
+    "features": "core",
+    "model": "xgb_residual",
+    "n_features": 49,
+    "composite": 53.39833236306842,
+    "mae_all": 84.06363257164378,
+    "mae_peak": 30.85808264690897,
+    "pinball_p90": 10.545456415869191
+  },
+  {
+    "window": "from_2025_12_01",
+    "features": "no_weather",
+    "model": "hgb_residual",
+    "n_features": 50,
+    "composite": 56.4254349576281,
+    "mae_all": 96.48409144653867,
+    "mae_peak": 18.93090289572011,
+    "pinball_p90": 12.520591828213677
+  },
+  {
+    "window": "from_2025_12_01",
+    "features": "no_weather",
+    "model": "xgb_residual",
+    "n_features": 50,
+    "composite": 54.02088822984538,
+    "mae_all": 89.23587159297927,
+    "mae_peak": 24.020584769870926,
+    "pinball_p90": 10.983885011972331
+  },
+  {
+    "window": "from_2025_12_01",
+    "features": "all",
+    "model": "hgb_residual",
+    "n_features": 59,
+    "composite": 63.19046419746487,
+    "mae_all": 105.4831365063586,
+    "mae_peak": 25.868172023607336,
+    "pinball_p90": 13.442221686016817
+  },
+  {
+    "window": "from_2025_12_01",
+    "features": "all",
+    "model": "xgb_residual",
+    "n_features": 59,
+    "composite": 56.48496951521012,
+    "mae_all": 89.98400988386351,
+    "mae_peak": 31.05608600118886,
+    "pinball_p90": 10.880693864608556
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "anchor": "outputs/results/predictions.csv",
+  "tail_specialist": "hackathon_reefer_dl/outputs/predictions_tabular_emergency.csv",
+  "top_k": 15,
+  "tail_point_anchor_weight": 0.275,
+  "tail_p90_anchor_weight": 0.95,
+  "composite": 32.43098963122694,
+  "mae_all": 32.74532469100084,
+  "mae_peak": 48.676569400852394,
+  "pinball_p90": 7.276782327354049,
+  "tail_rank_timestamps": [
+    "2026-01-10T01:00:00Z",
+    "2026-01-09T20:00:00Z",
+    "2026-01-09T22:00:00Z",
+    "2026-01-10T00:00:00Z",
+    "2026-01-10T03:00:00Z",
+    "2026-01-10T05:00:00Z",
+    "2026-01-09T21:00:00Z",
+    "2026-01-10T04:00:00Z",
+    "2026-01-10T02:00:00Z",
+    "2026-01-10T06:00:00Z",
+    "2026-01-09T23:00:00Z",
+    "2026-01-08T21:00:00Z",
+    "2026-01-08T23:00:00Z",
+    "2026-01-09T19:00:00Z",
+    "2026-01-09T00:00:00Z"
+  ]
+}
